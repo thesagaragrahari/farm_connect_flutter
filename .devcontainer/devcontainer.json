@@ -1,7 +1,6 @@
 {
-  "name": "Flutter Ready Environment",
+  "name": "Flutter Ready",
   "image": "ghcr.io/cirruslabs/flutter:stable",
-
   "customizations": {
     "vscode": {
       "extensions": [
