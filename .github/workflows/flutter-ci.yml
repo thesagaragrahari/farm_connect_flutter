@@ -1,4 +1,4 @@
-name: Flutter CI/CD (Web + APK)
+name: Flutter CI/CD (Web + APK + Firebase)
 
 on:
   push:
@@ -9,50 +9,47 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: farm_connect   # 👈 IMPORTANT FIX
-
     steps:
-      # Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Setup Flutter
+      # ---------------- SETUP FLUTTER ----------------
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
-          cache: true
+          flutter-version: "stable"
 
-      # Install dependencies
+      - name: Verify Flutter
+        run: flutter doctor
+
+      # ---------------- INSTALL DEPENDENCIES ----------------
       - name: Get dependencies
+        working-directory: ./farm_connect
         run: flutter pub get
 
-      # Clean project
-      - name: Clean
-        run: flutter clean
-
-      # Build web
-      - name: Build Web
+      # ---------------- BUILD WEB ----------------
+      - name: Build Web App
+        working-directory: ./farm_connect
         run: flutter build web --release
 
-      # Deploy to Firebase
-      - name: Deploy Web
+      # ---------------- BUILD APK ----------------
+      - name: Build APK (Release)
+        working-directory: ./farm_connect
+        run: flutter build apk --release
+
+      # ---------------- UPLOAD APK ARTIFACT ----------------
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: farm_connect/build/app/outputs/flutter-apk/app-release.apk
+
+      # ---------------- FIREBASE DEPLOY ----------------
+      - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
           channelId: live
-          projectId: YOUR_FIREBASE_PROJECT_ID
-
-      # Build APK
-      - name: Build APK
-        run: flutter build apk --release
-
-      # Upload APK
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release
-          path: farm_connect/build/app/outputs/flutter-apk/app-release.apk
+          entryPoint: farm_connect
