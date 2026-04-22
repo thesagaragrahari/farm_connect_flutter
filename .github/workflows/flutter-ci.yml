@@ -26,40 +26,39 @@ jobs:
       - name: Flutter Doctor
         run: flutter doctor -v
 
-      # ---------------- CLEAN PROJECT ----------------
+      # ---------------- CLEAN ----------------
       - name: Clean Project
         working-directory: ./farm_connect
         run: flutter clean
 
-      # ---------------- INSTALL DEPENDENCIES ----------------
+      # ---------------- DEPENDENCIES ----------------
       - name: Get dependencies
         working-directory: ./farm_connect
         run: flutter pub get
 
       # ---------------- BUILD WEB ----------------
-      - name: Build Web App
+      - name: Build Web
         working-directory: ./farm_connect
         run: flutter build web --release
 
-      # ---------------- BUILD APK (FIXED + SAFE) ----------------
-      - name: Build APK (Release)
+      # ---------------- BUILD APK ----------------
+      - name: Build APK
         working-directory: ./farm_connect
-        run: |
-          flutter build apk --release --no-shrink
+        run: flutter build apk --release --no-shrink
 
       # ---------------- UPLOAD APK ----------------
-      - name: Upload APK Artifact
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-release-apk
           path: farm_connect/build/app/outputs/flutter-apk/app-release.apk
 
       # ---------------- FIREBASE DEPLOY ----------------
-      - name: Deploy to Firebase Hosting
+      - name: Deploy to Firebase
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_FARM_CONNECT_99499 }}
+          projectId: farm-connect-99499
           channelId: live
           entryPoint: farm_connect
