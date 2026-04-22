@@ -1,14 +1,6 @@
 {
-  "name": "Flutter Full Setup",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
-
-  "features": {
-    "ghcr.io/devcontainers/features/java:1": {
-      "version": "17"
-    }
-  },
-
-  "postCreateCommand": "bash .devcontainer/setup.sh",
+  "name": "Flutter Ready Environment",
+  "image": "ghcr.io/cirruslabs/flutter:stable",
 
   "customizations": {
     "vscode": {
