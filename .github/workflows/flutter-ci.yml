@@ -9,19 +9,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
     steps:
       # ---------------- CHECKOUT ----------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ---------------- FLUTTER SETUP (FIXED) ----------------
+      # ---------------- FLUTTER SETUP ----------------
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
 
-      - name: Verify Flutter
-        run: flutter doctor
+      - name: Flutter Doctor
+        run: flutter doctor -v
+
+      # ---------------- CLEAN PROJECT ----------------
+      - name: Clean Project
+        working-directory: ./farm_connect
+        run: flutter clean
 
       # ---------------- INSTALL DEPENDENCIES ----------------
       - name: Get dependencies
@@ -33,10 +41,11 @@ jobs:
         working-directory: ./farm_connect
         run: flutter build web --release
 
-      # ---------------- BUILD APK ----------------
+      # ---------------- BUILD APK (FIXED + SAFE) ----------------
       - name: Build APK (Release)
         working-directory: ./farm_connect
-        run: flutter build apk --release
+        run: |
+          flutter build apk --release --no-shrink
 
       # ---------------- UPLOAD APK ----------------
       - name: Upload APK Artifact
