@@ -6,35 +6,39 @@ on:
       - staging
 
 jobs:
-  build-web-and-apk:
+  build:
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: farm_connect   # 👈 IMPORTANT FIX
+
     steps:
-      # 1. Checkout code
+      # Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Setup Flutter (IMPORTANT FIXED VERSION)
+      # Setup Flutter
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           cache: true
 
-      # 3. Get dependencies
-      - name: Install dependencies
+      # Install dependencies
+      - name: Get dependencies
         run: flutter pub get
 
-      # 4. Clean project (prevents cache issues)
-      - name: Clean project
+      # Clean project
+      - name: Clean
         run: flutter clean
 
-      # 5. Build Web App
+      # Build web
       - name: Build Web
         run: flutter build web --release
 
-      # 6. Deploy Web to Firebase Hosting
-      - name: Deploy to Firebase Hosting
+      # Deploy to Firebase
+      - name: Deploy Web
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
@@ -42,13 +46,13 @@ jobs:
           channelId: live
           projectId: YOUR_FIREBASE_PROJECT_ID
 
-      # 7. Build Android APK
+      # Build APK
       - name: Build APK
         run: flutter build apk --release
 
-      # 8. Upload APK as GitHub Artifact
+      # Upload APK
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: app-release
+          path: farm_connect/build/app/outputs/flutter-apk/app-release.apk
