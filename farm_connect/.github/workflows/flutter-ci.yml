@@ -1,0 +1,49 @@
+name: Flutter CI/CD (Cloud Only)
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Setup Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: stable
+
+      # 3. Dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 4. Build Web
+      - name: Build Web
+        run: flutter build web
+
+      # 5. Deploy Web to Firebase (NO CLI, SERVICE ACCOUNT ONLY)
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: farm-connect-99499
+          channelId: live
+
+      # 6. Build APK
+      - name: Build APK
+        run: flutter build apk --release
+
+      # 7. Upload APK
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: build/app/outputs/flutter-apk/app-release.apk
