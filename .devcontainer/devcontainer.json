@@ -1,5 +1,5 @@
 {
-  "name": "Flutter Dev Environment",
+  "name": "Flutter Full Setup",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
 
   "features": {
