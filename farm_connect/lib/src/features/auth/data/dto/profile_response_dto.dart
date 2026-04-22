@@ -1,7 +1,22 @@
 class ProfileResponseDto {
-  final String name;
+  final String fullName;
   final String email;
-  ProfileResponseDto({required this.name, required this.email});
-  factory ProfileResponseDto.fromJson(Map<String, dynamic> json) =>
-      ProfileResponseDto(name: json['name'], email: json['email']);
+  final String? phone;
+  final String? role;
+
+  ProfileResponseDto({
+    required this.fullName,
+    required this.email,
+    this.phone,
+    this.role,
+  });
+
+  factory ProfileResponseDto.fromJson(Map<String, dynamic> json) {
+    return ProfileResponseDto(
+      fullName: (json['fullName'] ?? json['name'] ?? '').toString(),
+      email: (json['email'] ?? '').toString(),
+      phone: json['phone']?.toString(),
+      role: json['role']?.toString(),
+    );
+  }
 }

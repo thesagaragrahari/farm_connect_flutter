@@ -6,6 +6,8 @@ import '../../features/auth/application/auth_controller.dart'; // adjust import 
 
 class GoRouterRefreshNotifier extends ChangeNotifier {
   GoRouterRefreshNotifier();
+
+  void refresh() => notifyListeners();
 }
 
 final goRouterRefreshProvider = Provider<GoRouterRefreshNotifier>((ref) {
@@ -19,7 +21,7 @@ final goRouterRefreshProvider = Provider<GoRouterRefreshNotifier>((ref) {
       final isLoggedIn  = next.value != null;
 
       if (wasLoggedIn != isLoggedIn) {
-        notifier.notifyListeners();
+        notifier.refresh();
       }
       // Optional: always notify on any change (loading → data, error, etc.)
       // notifier.notifyListeners(); // uncomment if you want more frequent refreshes

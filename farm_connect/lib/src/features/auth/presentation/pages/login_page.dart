@@ -1,11 +1,12 @@
-import 'package:farm_connect/main.dart';
+import 'package:farm_connect/src/core/common_widgets/custom_text_field.dart';
+import 'package:farm_connect/src/core/common_widgets/primary_button.dart';
+import 'package:farm_connect/src/features/auth/application/auth_controller.dart';
+import 'package:farm_connect/src/features/auth/domain/entities/auth_session.dart';
+import 'package:farm_connect/src/features/auth/presentation/pages/widgets/auth_shell.dart';
+import 'package:farm_connect/src/features/auth/presentation/pages/widgets/verification_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:farm_connect/src/core/constants/roles.dart';
-// Note: Ensure this import points to your themeProvider in main.dart or a shared file
-// import '/main.dart'; 
-
-import '../../application/auth_controller.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -19,152 +20,221 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   String? selectedRole;
-  bool obscurePassword = true;
-
-  @override
-  Widget build(BuildContext context) {
-    final authController = ref.watch(authControllerProvider);
-    final authNotifier = ref.read(authControllerProvider.notifier);
-    
-    // Watch for theme changes
-    final themeMode = ref.watch(themeProvider);
-    final isDark = themeMode == ThemeMode.dark;
-    final primaryGreen = const Color(0xFF4CAF50);
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          // THEME SWITCH
-          Row(
-            children: [
-              Icon(isDark ? Icons.dark_mode : Icons.light_mode, size: 18),
-              Switch(
-                value: isDark,
-                activeColor: primaryGreen,
-                onChanged: (val) {
-                  ref.read(themeProvider.notifier).state = 
-                      val ? ThemeMode.dark : ThemeMode.light;
-                },
-              ),
-            ],
-          ),
-        ],
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            children: [
-              // Branding Header
-              Text(
-                'KRISHISETU',
-                style: TextStyle(
-                  color: primaryGreen,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2.0,
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 30),
-              
-              // Login Card (Automatically uses surface color from theme)
-              Container(
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: isDark ? Colors.white10 : Colors.black12),
-                  boxShadow: [
-                    if (!isDark) BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)
-                  ],
-                ),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Text(
-                        'Account Login',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 24),
-                      
-                      TextFormField(
-                        controller: emailController,
-                        decoration: const InputDecoration(
-                          labelText: 'Email',
-                          prefixIcon: Icon(Icons.email_outlined),
-                        ),
-                        validator: (v) => v != null && v.contains('@') ? null : 'Invalid email',
-                      ),
-                      const SizedBox(height: 16),
-                      
-                      TextFormField(
-                        controller: passwordController,
-                        obscureText: obscurePassword,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          prefixIcon: const Icon(Icons.lock_outline),
-                          suffixIcon: IconButton(
-                            icon: Icon(obscurePassword ? Icons.visibility : Icons.visibility_off),
-                            onPressed: () => setState(() => obscurePassword = !obscurePassword),
-                          ),
-                        ),
-                        validator: (v) => v != null && v.length >= 6 ? null : 'Min 6 chars',
-                      ),
-                      const SizedBox(height: 16),
-                      
-                      DropdownButtonFormField<String>(
-                        decoration: const InputDecoration(
-                          labelText: 'Select Role',
-                          prefixIcon: Icon(Icons.person_outline),
-                        ),
-                        value: selectedRole,
-                        items: roles.map((role) => DropdownMenuItem(value: role, child: Text(role))).toList(),
-                        onChanged: (value) => setState(() => selectedRole = value),
-                        validator: (value) => value == null ? 'Please select a role' : null,
-                      ),
-                      const SizedBox(height: 32),
-                      
-                      ElevatedButton(
-                        onPressed: authController.isLoading
-                            ? null
-                            : () {
-                                if (_formKey.currentState!.validate()) {
-                                  authNotifier.login(
-                                    emailController.text.trim(),
-                                    passwordController.text,
-                                    selectedRole!,
-                                  );
-                                }
-                              },
-                        child: authController.isLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text('LOG IN', style: TextStyle(fontWeight: FontWeight.bold)),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () => Navigator.pushNamed(context, '/signup'),
-                child: Text('Create Account', style: TextStyle(color: primaryGreen)),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    if (!_formKey.currentState!.validate()) return;
+    if (selectedRole == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a role (Farmer/Worker).')),
+      );
+      return;
+    }
+
+    await ref.read(authControllerProvider.notifier).login(
+          emailController.text.trim(),
+          passwordController.text,
+          selectedRole!,
+        );
+  }
+
+  void _showVerificationPopup(String email) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => VerificationView(
+        email: email,
+        onResend: () async {
+          try {
+            final message = await ref
+                .read(authControllerProvider.notifier)
+                .resendVerification(
+                  email,
+                );
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(message)),
+            );
+          } catch (e) {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(e.toString()),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildRoleSelector() {
+    const roles = <String>['farmer', 'worker'];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Role',
+          style: TextStyle(
+            color: kAuthTextSecondary,
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: roles.map((role) {
+            final isSelected = selectedRole == role;
+            return Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(right: role == 'farmer' ? 10 : 0),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 220),
+                  curve: Curves.easeOut,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? kAuthAccent.withValues(alpha: 0.18)
+                        : const Color(0xFF091528),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: isSelected ? kAuthAccent : const Color(0xFF1E3452),
+                    ),
+                  ),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(14),
+                    onTap: () => setState(() => selectedRole = role),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 12,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            role == 'farmer'
+                                ? Icons.agriculture_rounded
+                                : Icons.engineering_rounded,
+                            size: 18,
+                            color: isSelected
+                                ? kAuthAccent
+                                : const Color(0xFF9DB2CA),
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            role[0].toUpperCase() + role.substring(1),
+                            style: TextStyle(
+                              color: isSelected
+                                  ? kAuthTextPrimary
+                                  : const Color(0xFFB6C8DD),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen<AsyncValue<AuthSession?>>(authControllerProvider, (_, next) {
+      next.whenOrNull(
+        data: (session) {
+          if (session != null && mounted) context.go('/dashboard');
+        },
+        error: (error, _) {
+          final errorMsg = error.toString();
+          if (errorMsg.toLowerCase().contains('verify')) {
+            _showVerificationPopup(emailController.text.trim());
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(errorMsg), backgroundColor: Colors.red),
+            );
+          }
+        },
+      );
+    });
+
+    final authState = ref.watch(authControllerProvider);
+
+    return AuthShell(
+      title: 'Welcome Back',
+      subtitle: 'Login to continue farming smarter with your community.',
+      footerActions: [
+        TextButton(
+          onPressed: () => context.go('/forgot-password'),
+          child: const Text('Forgot password?'),
+        ),
+        TextButton(
+          onPressed: () => context.go('/signup'),
+          child: const Text('Create new account'),
+        ),
+        TextButton(
+          onPressed: () => context.go('/verify-email'),
+          child: const Text('Verify email with token'),
+        ),
+      ],
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            CustomTextField(
+              controller: emailController,
+              label: 'Email',
+              hint: 'name@example.com',
+              prefixIcon: Icons.email_outlined,
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return 'Email is required';
+                }
+                if (!value.contains('@')) return 'Enter a valid email';
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            CustomTextField(
+              controller: passwordController,
+              label: 'Password',
+              hint: 'Enter your password',
+              isPassword: true,
+              prefixIcon: Icons.lock_outline_rounded,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Password is required';
+                }
+                if (value.length < 6) return 'Minimum 6 characters';
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildRoleSelector(),
+            const SizedBox(height: 26),
+            PrimaryButton(
+              text: 'LOG IN',
+              isLoading: authState.isLoading,
+              trailingIcon: Icons.arrow_forward_rounded,
+              onPressed: _handleLogin,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
