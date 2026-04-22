@@ -1,4 +1,4 @@
-name: Flutter CI/CD (Web + APK + Firebase)
+name: Flutter CI/CD (Web + Split APK + Firebase)
 
 on:
   push:
@@ -10,14 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
 
     steps:
       # ---------------- CHECKOUT ----------------
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ---------------- FLUTTER SETUP ----------------
+      # ---------------- SETUP FLUTTER ----------------
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -29,7 +29,10 @@ jobs:
       # ---------------- CLEAN ----------------
       - name: Clean Project
         working-directory: ./farm_connect
-        run: flutter clean
+        run: |
+          flutter clean
+          rm -rf build
+          rm -rf .dart_tool
 
       # ---------------- DEPENDENCIES ----------------
       - name: Get dependencies
@@ -41,24 +44,23 @@ jobs:
         working-directory: ./farm_connect
         run: flutter build web --release
 
-      # ---------------- BUILD APK ----------------
-      - name: Build APK
+      # ---------------- BUILD SPLIT APK ----------------
+      - name: Build Split APKs
         working-directory: ./farm_connect
-        run: |
-          flutter clean
-          rm -rf build
-          rm -rf .dart_tool
-          flutter pub get
-          flutter build apk --release
-      # ---------------- UPLOAD APK ----------------
-      - name: Upload APK
+        run: flutter build apk --release --split-per-abi
+
+      # ---------------- UPLOAD APKs ----------------
+      - name: Upload APK Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-apk
-          path: farm_connect/build/app/outputs/flutter-apk/app-release.apk
+          name: split-apks
+          path: |
+            farm_connect/build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+            farm_connect/build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+            farm_connect/build/app/outputs/flutter-apk/app-x86_64-release.apk
 
       # ---------------- FIREBASE DEPLOY ----------------
-      - name: Deploy to Firebase
+      - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
