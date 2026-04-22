@@ -44,8 +44,12 @@ jobs:
       # ---------------- BUILD APK ----------------
       - name: Build APK
         working-directory: ./farm_connect
-        run: flutter build apk --release --no-shrink
-
+        run: |
+          flutter clean
+          rm -rf build
+          rm -rf .dart_tool
+          flutter pub get
+          flutter build apk --release
       # ---------------- UPLOAD APK ----------------
       - name: Upload APK
         uses: actions/upload-artifact@v4
