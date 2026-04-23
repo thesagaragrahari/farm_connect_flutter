@@ -4,6 +4,12 @@ import '../../features/auth/domain/entities/user_profile.dart';
 
 Future<void> initHive() async {
   await Hive.initFlutter();
-  Hive.registerAdapter(UserProfileAdapter());
-  await Hive.openBox<UserProfile>('user_profile');
+  final adapter = UserProfileAdapter();
+  if (!Hive.isAdapterRegistered(adapter.typeId)) {
+    Hive.registerAdapter(adapter);
+  }
+
+  if (!Hive.isBoxOpen('user_profile')) {
+    await Hive.openBox<UserProfile>('user_profile');
+  }
 }

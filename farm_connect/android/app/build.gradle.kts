@@ -5,6 +5,19 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+val hasGoogleServicesJson = listOf(
+    "google-services.json",
+    "src/debug/google-services.json",
+    "src/release/google-services.json",
+    "src/profile/google-services.json",
+).map(::file).any { it.exists() }
+
+if (hasGoogleServicesJson) {
+    apply(plugin = "com.google.gms.google-services")
+} else {
+    logger.lifecycle("google-services.json not found; skipping Google Services Gradle plugin.")
+}
+
 android {
     namespace = "com.farmconnect.farm_connect"
     compileSdk = flutter.compileSdkVersion
