@@ -1,4 +1,5 @@
 import 'package:farm_connect/src/core/util/go_router_refresh_stream.dart';
+import 'package:farm_connect/src/features/user/presentation/pages/active_users.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,7 +14,8 @@ import '../features/auth/presentation/pages/dashboard_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/login',
+    initialLocation: '/preview',
+    //initialLocation: '/login',
 
     // Use the refresh notifier that listens to authControllerProvider
     refreshListenable: ref.watch(goRouterRefreshProvider),
@@ -26,6 +28,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final loggedIn = authAsync.hasValue && authAsync.value != null;
 
       const publicAuthRoutes = <String>{
+        '/preview', //comment it later just for testing
         '/login',
         '/signup',
         '/forgot-password',
@@ -50,6 +53,11 @@ final routerProvider = Provider<GoRouter>((ref) {
     },
 
     routes: [
+      GoRoute(
+        path: '/preview',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const ActiveUsersPage()),
+      ),
       GoRoute(
         path: '/login',
         pageBuilder: (context, state) =>
