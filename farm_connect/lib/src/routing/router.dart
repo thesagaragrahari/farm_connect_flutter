@@ -1,5 +1,15 @@
 import 'package:farm_connect/src/core/util/go_router_refresh_stream.dart';
 import 'package:farm_connect/src/features/user/presentation/pages/active_users.dart';
+import 'package:farm_connect/src/features/user/presentation/pages/edit_profile_screen.dart';
+import 'package:farm_connect/src/features/user/presentation/pages/farmer_details_screen.dart';
+import 'package:farm_connect/src/features/user/presentation/pages/farmer_dashboard.dart';
+import 'package:farm_connect/src/features/user/presentation/pages/job_post.dart';
+import 'package:farm_connect/src/features/user/presentation/pages/manage_job_page.dart';
+import 'package:farm_connect/src/features/user/presentation/pages/profile_screen.dart';
+import 'package:farm_connect/src/features/user/presentation/pages/public_profile_screen.dart';
+import 'package:farm_connect/src/features/user/presentation/pages/settings_screen.dart';
+import 'package:farm_connect/src/features/user/presentation/pages/skill_selection_screen.dart';
+import 'package:farm_connect/src/features/user/presentation/pages/worker_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -56,7 +66,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/preview',
         pageBuilder: (context, state) =>
-            _buildAnimatedPage(state, const ActiveUsersPage()),
+            _buildAnimatedPage(state, const FarmerDashboardPage()),
       ),
       GoRoute(
         path: '/login',
@@ -87,6 +97,63 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/dashboard',
         pageBuilder: (context, state) =>
             _buildAnimatedPage(state, const DashboardPage()),
+      ),
+      GoRoute(
+        path: '/profile',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const ProfileScreen()),
+      ),
+      GoRoute(
+        path: '/profile/edit',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const EditProfileScreen()),
+      ),
+      GoRoute(
+        path: '/profile/worker',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const WorkerDetailsScreen()),
+      ),
+      GoRoute(
+        path: '/profile/worker/skills',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const SkillSelectionScreen()),
+      ),
+      GoRoute(
+        path: '/profile/farmer',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const FarmerDetailsScreen()),
+      ),
+      GoRoute(
+        path: '/profile/public/:userId',
+        pageBuilder: (context, state) => _buildAnimatedPage(
+          state,
+          PublicProfileScreen(userId: state.pathParameters['userId'] ?? ''),
+        ),
+      ),
+      GoRoute(
+        path: '/settings',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const SettingsScreen()),
+      ),
+      GoRoute(
+        path: '/active-users',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const ActiveUsersPage()),
+      ),
+      GoRoute(
+        path: '/manage-jobs',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const ManageJobsPage()),
+      ),
+      GoRoute(
+        path: '/post-job',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const JobPostPage()),
+      ),
+      GoRoute(
+        path: '/worker-profile',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const WorkerDetailsScreen()),
       ),
     ],
   );
