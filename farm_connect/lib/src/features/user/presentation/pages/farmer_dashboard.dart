@@ -17,35 +17,39 @@ class FarmerDashboardPage extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
+      body: ListView(
         padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            DashboardActionCard(
-              title: 'View Active Users',
-              icon: Icons.people_alt_outlined,
-              onTap: () => context.push('/active-users'),
-            ),
-            const SizedBox(height: 16),
-            DashboardActionCard(
-              title: 'Post Job',
-              icon: Icons.work_outline_rounded,
-              onTap: () => context.push('/post-job'),
-            ),
-            const SizedBox(height: 16),
-            DashboardActionCard(
-              title: 'Manage Jobs',
-              icon: Icons.dashboard_outlined,
-              onTap: () => context.push('/manage-jobs'),
-            ),
-            const SizedBox(height: 16),
-            DashboardActionCard(
-              title: 'Profile',
-              icon: Icons.person_outline,
-              onTap: () => context.push('/profile'),
-            ),
-          ],
-        ),
+        children: [
+          DashboardActionCard(
+            title: 'View Active Users',
+            icon: Icons.people_alt_outlined,
+            onTap: () => context.push('/active-users'),
+          ),
+          const SizedBox(height: 16),
+          DashboardActionCard(
+            title: 'Post Job',
+            icon: Icons.work_outline_rounded,
+            onTap: () => context.push('/post-job'),
+          ),
+          const SizedBox(height: 16),
+          DashboardActionCard(
+            title: 'Manage Jobs',
+            icon: Icons.dashboard_outlined,
+            onTap: () => context.push('/manage-jobs'),
+          ),
+          const SizedBox(height: 16),
+          DashboardActionCard(
+            title: 'Profile',
+            icon: Icons.person_outline,
+            onTap: () => context.push('/profile'),
+          ),
+          const SizedBox(height: 16),
+          DashboardActionCard(
+            title: 'Settings',
+            icon: Icons.settings_outlined,
+            onTap: () => context.push('/settings'),
+          ),
+        ],
       ),
     );
   }

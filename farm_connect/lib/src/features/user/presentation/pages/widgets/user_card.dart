@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../domain/entities/user_profile_details.dart';
+
 class UserCard extends StatelessWidget {
-  const UserCard({super.key});
+  final UserProfileDetails? user;
+
+  const UserCard({super.key, this.user});
 
   @override
   Widget build(BuildContext context) {
+    final name = user?.fullName.isNotEmpty == true ? user!.fullName : 'Worker';
+    final worker = user?.workerProfile;
+    final subtitle = worker == null
+        ? 'Farm worker'
+        : '${worker.skills.take(2).join(', ')} • ${worker.experience ?? 'Experience not added'}';
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -19,27 +29,34 @@ class UserCard extends StatelessWidget {
             child: Icon(Icons.person_outline_rounded),
           ),
           const SizedBox(width: 14),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Ramesh Kumar',
-                  style: TextStyle(
+                  name,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  'Harvesting • 5 Years Experience',
-                  style: TextStyle(color: Colors.white70),
+                  subtitle,
+                  style: const TextStyle(color: Colors.white70),
                 ),
               ],
             ),
           ),
           ElevatedButton(
-            onPressed: () => context.push('/worker-profile'),
+            onPressed: () {
+              final id = user?.id;
+              if (id != null && id.isNotEmpty) {
+                context.push('/profile/public/$id');
+                return;
+              }
+              context.push('/worker-profile');
+            },
             child: const Text('View'),
           ),
         ],
