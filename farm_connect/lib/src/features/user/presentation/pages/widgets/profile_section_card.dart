@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:farm_connect/src/core/theme/app_theme.dart';
+
 class ProfileSectionCard extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -17,11 +19,7 @@ class ProfileSectionCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-      ),
+      decoration: AppTheme.cardDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

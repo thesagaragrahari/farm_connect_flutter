@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:farm_connect/src/core/theme/app_theme.dart';
+
 class WorkerInfoTile extends StatelessWidget {
   final String value;
 
@@ -13,14 +15,11 @@ class WorkerInfoTile extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF132238),
-        borderRadius: BorderRadius.circular(16),
-      ),
+      decoration: AppTheme.cardDecoration(context),
       child: Text(
         value,
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: AppTheme.appText(context),
         ),
       ),
     );

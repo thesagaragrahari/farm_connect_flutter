@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
+
 class CustomTextField extends StatefulWidget {
   final String label;
   final String? hint;
@@ -55,16 +57,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     final focused = _focusNode.hasFocus;
-    const borderColor = Color(0xFF1E3452);
-    const focusedColor = Color(0xFF33D17A);
+    final focusedColor =
+        AppTheme.isDark(context) ? AppTheme.metallicGold : AppTheme.forestGreen;
+    final textColor = AppTheme.appText(context);
+    final mutedColor = AppTheme.appMutedText(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           widget.label,
-          style: const TextStyle(
-            color: Color(0xFFAFC4DC),
+          style: TextStyle(
+            color: mutedColor,
             fontWeight: FontWeight.w600,
             fontSize: 13,
           ),
@@ -93,13 +97,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
             keyboardType: widget.keyboardType,
             textInputAction: widget.textInputAction,
             onFieldSubmitted: widget.onFieldSubmitted,
-            style: const TextStyle(color: Color(0xFFEAF2FF)),
+            style: TextStyle(color: textColor),
             cursorColor: focusedColor,
             decoration: InputDecoration(
               hintText: widget.hint,
-              hintStyle: const TextStyle(color: Color(0xFF68819D)),
+              hintStyle: TextStyle(color: mutedColor.withValues(alpha: 0.72)),
               prefixIcon: widget.prefixIcon != null
-                  ? Icon(widget.prefixIcon, color: const Color(0xFF8FA5C0))
+                  ? Icon(widget.prefixIcon, color: mutedColor)
                   : null,
               suffixIcon: widget.isPassword
                   ? IconButton(
@@ -109,37 +113,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         _obscureText
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
-                        color: const Color(0xFF8FA5C0),
+                        color: mutedColor,
                       ),
                     )
                   : null,
-              filled: true,
-              fillColor: const Color(0xFF091528),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 15,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: borderColor),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: borderColor),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: focusedColor, width: 1.5),
-              ),
-              errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: Colors.redAccent),
-              ),
-              focusedErrorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(16),
-                borderSide:
-                    const BorderSide(color: Colors.redAccent, width: 1.2),
-              ),
             ),
           ),
         ),

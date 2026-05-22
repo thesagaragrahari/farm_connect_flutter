@@ -1,14 +1,15 @@
 import 'dart:math' as math;
 
+import 'package:farm_connect/src/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
-const Color kAuthBgTop = Color(0xFF071224);
-const Color kAuthBgBottom = Color(0xFF030913);
-const Color kAuthCard = Color(0xFF0D1A2D);
-const Color kAuthCardBorder = Color(0xFF1D3554);
-const Color kAuthAccent = Color(0xFF33D17A);
-const Color kAuthTextPrimary = Color(0xFFEAF2FF);
-const Color kAuthTextSecondary = Color(0xFF9FB3CC);
+const Color kAuthBgTop = AppTheme.darkBackground;
+const Color kAuthBgBottom = AppTheme.darkBrown;
+const Color kAuthCard = AppTheme.darkSurface;
+const Color kAuthCardBorder = Color(0xFF3B4A2F);
+const Color kAuthAccent = AppTheme.metallicGold;
+const Color kAuthTextPrimary = AppTheme.darkText;
+const Color kAuthTextSecondary = AppTheme.darkMutedText;
 
 class AuthShell extends StatefulWidget {
   final String title;
@@ -49,6 +50,10 @@ class _AuthShellState extends State<AuthShell>
 
   @override
   Widget build(BuildContext context) {
+    final isDark = AppTheme.isDark(context);
+    final textPrimary = AppTheme.appText(context);
+    final textSecondary = AppTheme.appMutedText(context);
+
     return Scaffold(
       body: AnimatedBuilder(
         animation: _backgroundController,
@@ -60,11 +65,11 @@ class _AuthShellState extends State<AuthShell>
           return Stack(
             children: [
               Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [kAuthBgTop, kAuthBgBottom],
+                    colors: AppTheme.appGradient(context),
                   ),
                 ),
               ),
@@ -109,12 +114,18 @@ class _AuthShellState extends State<AuthShell>
                         child: Container(
                           padding: const EdgeInsets.all(24),
                           decoration: BoxDecoration(
-                            color: kAuthCard,
-                            borderRadius: BorderRadius.circular(26),
-                            border: Border.all(color: kAuthCardBorder),
+                            color: AppTheme.appSurface(context),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: isDark
+                                  ? AppTheme.metallicGold.withValues(alpha: 0.34)
+                                  : AppTheme.earthBrown.withValues(alpha: 0.34),
+                            ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.35),
+                                color: Colors.black.withValues(
+                                  alpha: isDark ? 0.35 : 0.14,
+                                ),
                                 blurRadius: 24,
                                 offset: const Offset(0, 10),
                               ),
@@ -127,8 +138,8 @@ class _AuthShellState extends State<AuthShell>
                               const SizedBox(height: 18),
                               Text(
                                 widget.title,
-                                style: const TextStyle(
-                                  color: kAuthTextPrimary,
+                                style: TextStyle(
+                                  color: textPrimary,
                                   fontSize: 30,
                                   fontWeight: FontWeight.w800,
                                 ),
@@ -137,8 +148,8 @@ class _AuthShellState extends State<AuthShell>
                               const SizedBox(height: 10),
                               Text(
                                 widget.subtitle,
-                                style: const TextStyle(
-                                  color: kAuthTextSecondary,
+                                style: TextStyle(
+                                  color: textSecondary,
                                   height: 1.45,
                                   fontSize: 14,
                                 ),
@@ -196,6 +207,7 @@ class _AuthBrand extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textPrimary = AppTheme.appText(context);
     return Column(
       children: [
         Hero(
@@ -205,28 +217,35 @@ class _AuthBrand extends StatelessWidget {
             height: 88,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: kAuthAccent, width: 1.8),
+              gradient: AppTheme.metallicGradient(),
               boxShadow: [
                 BoxShadow(
-                  color: kAuthAccent.withValues(alpha: 0.22),
+                  color: AppTheme.metallicGold.withValues(alpha: 0.24),
                   blurRadius: 18,
                 ),
               ],
             ),
-            child: ClipOval(
-              child: Image.asset(
-                'assets/images/farm_connect_app_icon.png',
-                fit: BoxFit.cover,
+            child: Padding(
+              padding: const EdgeInsets.all(3),
+              child: ClipOval(
+                child: Image.network(
+                  AppTheme.appIconUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Image.asset(
+                    'assets/images/farm_connect_app_icon.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
           ),
         ),
         const SizedBox(height: 14),
-        const Text(
-          'KrishiSetu',
+        Text(
+          'FarmConnect',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: kAuthTextPrimary,
+            color: textPrimary,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.1,
           ),

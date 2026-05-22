@@ -1,36 +1,37 @@
 import 'package:flutter/material.dart';
 
+import 'package:farm_connect/src/core/theme/app_theme.dart';
+
 class JobCard extends StatelessWidget {
   const JobCard({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final textColor = AppTheme.appText(context);
+    final mutedColor = AppTheme.appMutedText(context);
     return Container(
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: const Color(0xFF132238),
-        borderRadius: BorderRadius.circular(18),
-      ),
+      decoration: AppTheme.cardDecoration(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Harvesting Job',
             style: TextStyle(
-              color: Colors.white,
+              color: textColor,
               fontWeight: FontWeight.bold,
               fontSize: 17,
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Worker Assigned: Ramesh Kumar',
-            style: TextStyle(color: Colors.white70),
+            style: TextStyle(color: mutedColor),
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             'Status: 98% Completed',
-            style: TextStyle(color: Colors.white70),
+            style: TextStyle(color: mutedColor),
           ),
           const SizedBox(height: 16),
           ElevatedButton(

@@ -1,5 +1,6 @@
 import 'package:farm_connect/src/core/common_widgets/custom_text_field.dart';
 import 'package:farm_connect/src/core/common_widgets/primary_button.dart';
+import 'package:farm_connect/src/core/theme/app_theme.dart';
 import 'package:farm_connect/src/features/auth/application/auth_controller.dart';
 import 'package:farm_connect/src/features/auth/domain/entities/auth_session.dart';
 import 'package:farm_connect/src/features/auth/presentation/pages/widgets/auth_shell.dart';
@@ -78,13 +79,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   Widget _buildRoleSelector() {
     const roles = <String>['farmer', 'worker'];
+    final muted = AppTheme.appMutedText(context);
+    final text = AppTheme.appText(context);
+    final surface = AppTheme.appSurfaceAlt(context);
+    final accent =
+        AppTheme.isDark(context) ? AppTheme.metallicGold : AppTheme.forestGreen;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Role',
           style: TextStyle(
-            color: kAuthTextSecondary,
+            color: muted,
             fontWeight: FontWeight.w600,
             fontSize: 13,
           ),
@@ -101,11 +107,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   curve: Curves.easeOut,
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? kAuthAccent.withValues(alpha: 0.18)
-                        : const Color(0xFF091528),
+                        ? accent.withValues(alpha: 0.18)
+                        : surface,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: isSelected ? kAuthAccent : const Color(0xFF1E3452),
+                      color: isSelected
+                          ? accent
+                          : muted.withValues(alpha: 0.28),
                     ),
                   ),
                   child: InkWell(
@@ -124,17 +132,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 ? Icons.agriculture_rounded
                                 : Icons.engineering_rounded,
                             size: 18,
-                            color: isSelected
-                                ? kAuthAccent
-                                : const Color(0xFF9DB2CA),
+                            color: isSelected ? accent : muted,
                           ),
                           const SizedBox(width: 6),
                           Text(
                             role[0].toUpperCase() + role.substring(1),
                             style: TextStyle(
                               color: isSelected
-                                  ? kAuthTextPrimary
-                                  : const Color(0xFFB6C8DD),
+                                  ? text
+                                  : muted,
                               fontWeight: FontWeight.w600,
                             ),
                           ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:farm_connect/src/core/theme/app_theme.dart';
+
 class VerificationView extends StatelessWidget {
   final String email;
   final Future<void> Function() onResend;
@@ -12,11 +14,13 @@ class VerificationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textColor = AppTheme.appText(context);
+    final mutedColor = AppTheme.appMutedText(context);
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        color: Color(0xFF0D1A2D),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+      decoration: BoxDecoration(
+        color: AppTheme.appSurface(context),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SafeArea(
         top: false,
@@ -27,7 +31,7 @@ class VerificationView extends StatelessWidget {
               height: 6,
               width: 60,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
+                color: mutedColor.withValues(alpha: 0.28),
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
@@ -37,20 +41,24 @@ class VerificationView extends StatelessWidget {
               height: 76,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFF33D17A), width: 1.6),
+                border: Border.all(color: AppTheme.metallicGold, width: 1.6),
               ),
               child: ClipOval(
-                child: Image.asset(
-                  'assets/images/farm_connect_app_icon.png',
+                child: Image.network(
+                  AppTheme.appIconUrl,
                   fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => Image.asset(
+                    'assets/images/farm_connect_app_icon.png',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'Verify Your Email',
               style: TextStyle(
-                color: Color(0xFFEAF2FF),
+                color: textColor,
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
               ),
@@ -59,8 +67,8 @@ class VerificationView extends StatelessWidget {
             Text(
               'We sent a verification link to\n$email',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Color(0xFF9FB3CC),
+              style: TextStyle(
+                color: mutedColor,
                 height: 1.5,
               ),
             ),

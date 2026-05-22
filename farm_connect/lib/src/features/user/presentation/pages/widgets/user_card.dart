@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:farm_connect/src/core/theme/app_theme.dart';
 import '../../../domain/entities/user_profile_details.dart';
 
 class UserCard extends StatelessWidget {
@@ -15,18 +16,20 @@ class UserCard extends StatelessWidget {
     final subtitle = worker == null
         ? 'Farm worker'
         : '${worker.skills.take(2).join(', ')} • ${worker.experience ?? 'Experience not added'}';
+    final textColor = AppTheme.appText(context);
+    final mutedColor = AppTheme.appMutedText(context);
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF132238),
-        borderRadius: BorderRadius.circular(18),
-      ),
+      decoration: AppTheme.cardDecoration(context),
       child: Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             radius: 28,
-            child: Icon(Icons.person_outline_rounded),
+            backgroundColor: AppTheme.isDark(context)
+                ? AppTheme.metallicGold
+                : AppTheme.forestGreen,
+            child: const Icon(Icons.person_outline_rounded, color: Colors.white),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -35,15 +38,15 @@ class UserCard extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: textColor,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: const TextStyle(color: Colors.white70),
+                  style: TextStyle(color: mutedColor),
                 ),
               ],
             ),

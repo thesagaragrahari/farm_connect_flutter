@@ -1,4 +1,5 @@
 import 'package:farm_connect/src/core/common_widgets/primary_button.dart';
+import 'package:farm_connect/src/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,26 +43,22 @@ class DashboardPage extends ConsumerWidget {
             children: [
               Container(
                 padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF091528),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFF1E3452)),
-                ),
+                decoration: AppTheme.cardDecoration(context),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Session Token',
                       style: TextStyle(
-                        color: kAuthTextSecondary,
+                        color: AppTheme.appMutedText(context),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(height: 8),
                     SelectableText(
                       _maskedToken(session.token),
-                      style: const TextStyle(
-                        color: kAuthTextPrimary,
+                      style: TextStyle(
+                        color: AppTheme.appText(context),
                         fontFamily: 'monospace',
                       ),
                     ),
@@ -79,14 +76,6 @@ class DashboardPage extends ConsumerWidget {
                     const SnackBar(content: Text('Token copied to clipboard.')),
                   );
                 },
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: Color(0xFF2A4A6D)),
-                  foregroundColor: const Color(0xFFC4D6E9),
-                  minimumSize: const Size(double.infinity, 48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
                 icon: const Icon(Icons.copy_all_rounded),
                 label: const Text('Copy full token'),
               ),

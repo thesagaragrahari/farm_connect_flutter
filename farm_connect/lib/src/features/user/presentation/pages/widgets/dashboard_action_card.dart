@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:farm_connect/src/core/theme/app_theme.dart';
+
 class DashboardActionCard extends StatelessWidget {
   final String title;
   final IconData icon;
@@ -14,30 +16,33 @@ class DashboardActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: const Color(0xFF132238),
-      borderRadius: BorderRadius.circular(18),
+    final textColor = AppTheme.appText(context);
+    final iconColor =
+        AppTheme.isDark(context) ? AppTheme.metallicGold : AppTheme.forestGreen;
+
+    return Container(
+      decoration: AppTheme.cardDecoration(context),
       child: InkWell(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(8),
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: Row(
             children: [
-              Icon(icon, color: Colors.white),
+              Icon(icon, color: iconColor),
               const SizedBox(width: 14),
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+                  style: TextStyle(
+                    color: textColor,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
-              const Icon(
+              Icon(
                 Icons.arrow_forward_ios_rounded,
-                color: Colors.white,
+                color: iconColor,
                 size: 18,
               ),
             ],

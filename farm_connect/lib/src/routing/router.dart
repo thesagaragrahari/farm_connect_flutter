@@ -9,6 +9,7 @@ import 'package:farm_connect/src/features/user/presentation/pages/profile_screen
 import 'package:farm_connect/src/features/user/presentation/pages/public_profile_screen.dart';
 import 'package:farm_connect/src/features/user/presentation/pages/settings_screen.dart';
 import 'package:farm_connect/src/features/user/presentation/pages/skill_selection_screen.dart';
+import 'package:farm_connect/src/features/user/presentation/pages/user_module_preview_page.dart';
 import 'package:farm_connect/src/features/user/presentation/pages/worker_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,8 +38,27 @@ final routerProvider = Provider<GoRouter>((ref) {
       // loggedIn = we have a non-null session (and no error/loading issues)
       final loggedIn = authAsync.hasValue && authAsync.value != null;
 
-      const publicAuthRoutes = <String>{
-        '/preview', //comment it later just for testing
+      const previewRoutes = <String>{
+        '/preview',
+        '/preview/auth/login',
+        '/preview/auth/signup',
+        '/preview/auth/forgot-password',
+        '/preview/auth/reset-password',
+        '/preview/auth/verify-email',
+        '/farmer-dashboard',
+        '/profile',
+        '/profile/edit',
+        '/profile/worker',
+        '/profile/worker/skills',
+        '/profile/farmer',
+        '/settings',
+        '/active-users',
+        '/manage-jobs',
+        '/post-job',
+        '/worker-profile',
+      };
+
+      const authRoutes = <String>{
         '/login',
         '/signup',
         '/forgot-password',
@@ -46,15 +66,18 @@ final routerProvider = Provider<GoRouter>((ref) {
         '/verify-email',
       };
 
-      final isPublicAuthRoute = publicAuthRoutes.contains(state.uri.path);
+      final isPreviewRoute = previewRoutes.contains(state.uri.path) ||
+          state.uri.path.startsWith('/profile/public/');
+      final isAuthRoute = authRoutes.contains(state.uri.path);
+      final isPublicRoute = isPreviewRoute || isAuthRoute;
 
       // Not logged in and trying to access protected route → go to login
-      if (!loggedIn && !isPublicAuthRoute) {
+      if (!loggedIn && !isPublicRoute) {
         return '/login';
       }
 
       // Already logged in and on login/signup → redirect to dashboard
-      if (loggedIn && isPublicAuthRoute) {
+      if (loggedIn && isAuthRoute) {
         return '/dashboard';
       }
 
@@ -65,6 +88,36 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/preview',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const UserModulePreviewPage()),
+      ),
+      GoRoute(
+        path: '/preview/auth/login',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const LoginPage()),
+      ),
+      GoRoute(
+        path: '/preview/auth/signup',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const SignupPage()),
+      ),
+      GoRoute(
+        path: '/preview/auth/forgot-password',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const ForgotPasswordPage()),
+      ),
+      GoRoute(
+        path: '/preview/auth/reset-password',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const ResetPasswordPage()),
+      ),
+      GoRoute(
+        path: '/preview/auth/verify-email',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const VerifyEmailPage()),
+      ),
+      GoRoute(
+        path: '/farmer-dashboard',
         pageBuilder: (context, state) =>
             _buildAnimatedPage(state, const FarmerDashboardPage()),
       ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:farm_connect/src/core/theme/app_theme.dart';
+
 class ProfileInfoRow extends StatelessWidget {
   final String label;
   final String value;
@@ -12,6 +14,8 @@ class ProfileInfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textColor = AppTheme.appText(context);
+    final mutedColor = AppTheme.appMutedText(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 7),
       child: Row(
@@ -22,7 +26,7 @@ class ProfileInfoRow extends StatelessWidget {
             child: Text(
               label,
               style: TextStyle(
-                color: Theme.of(context).textTheme.bodySmall?.color,
+                color: mutedColor,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -30,7 +34,7 @@ class ProfileInfoRow extends StatelessWidget {
           Expanded(
             child: Text(
               value.isEmpty ? 'Not added' : value,
-              style: const TextStyle(fontWeight: FontWeight.w500),
+              style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
             ),
           ),
         ],
