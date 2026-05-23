@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'app_palette.dart';
+
 class AppTheme {
   static const Color primaryGreen = Color.fromARGB(255, 36, 92, 39);
   static const Color secondaryGreen = Color(0xFF4CAF50);
@@ -21,23 +23,44 @@ class AppTheme {
   static const Color lightText = Color(0xFF2B1B0D);
   static const Color lightMutedText = Color(0xFF6E5630);
 
-  static const String appIconUrl =
+  static const String lightAppIconUrl =
       'https://farm-connect-backend-1.onrender.com/images/emails-app.png';
+  static const String darkAppIconUrl =
+      'https://farm-connect-backend-1.onrender.com/images/app_icon_dark.png';
+  static const String appIconUrl = lightAppIconUrl;
+
+  static const String lightBackgroundImageUrl =
+      'https://farm-connect-backend-1.onrender.com/images/light_bg.png';
+  static const String darkBackgroundImageUrl =
+      'https://farm-connect-backend-1.onrender.com/images/dark_bg.png';
+
+  static String appIconUrlFor(BuildContext context) {
+    return isDark(context) ? darkAppIconUrl : lightAppIconUrl;
+  }
+
+  static String backgroundImageUrlFor(BuildContext context) {
+    return isDark(context) ? darkBackgroundImageUrl : lightBackgroundImageUrl;
+  }
 
   static ThemeData get lightTheme => _buildTheme(Brightness.light);
 
   static ThemeData get darkTheme => _buildTheme(Brightness.dark);
+
+  static AppPalette palette(BuildContext context) {
+    return Theme.of(context).extension<AppPalette>() ??
+        AppPalette.fromBrightness(Theme.of(context).brightness);
+  }
 
   static bool isDark(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark;
   }
 
   static Color appBackground(BuildContext context) {
-    return isDark(context) ? darkBackground : lightBackground;
+    return palette(context).pageBackground;
   }
 
   static Color appSurface(BuildContext context) {
-    return isDark(context) ? darkSurface : lightSurface;
+    return palette(context).card;
   }
 
   static Color appSurfaceAlt(BuildContext context) {
@@ -45,17 +68,15 @@ class AppTheme {
   }
 
   static Color appText(BuildContext context) {
-    return isDark(context) ? darkText : lightText;
+    return palette(context).primaryText;
   }
 
   static Color appMutedText(BuildContext context) {
-    return isDark(context) ? darkMutedText : lightMutedText;
+    return palette(context).secondaryText;
   }
 
   static List<Color> appGradient(BuildContext context) {
-    return isDark(context)
-        ? const [darkBackground, darkSurfaceAlt, darkBrown]
-        : const [Color(0xFFF8EEDC), lightBackground, Color(0xFFE3C996)];
+    return palette(context).outerGradient;
   }
 
   static LinearGradient metallicGradient({bool light = false}) {
@@ -90,10 +111,11 @@ class AppTheme {
 
   static ThemeData _buildTheme(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
-    final background = isDark ? darkBackground : lightBackground;
-    final surface = isDark ? darkSurface : lightSurface;
-    final text = isDark ? darkText : lightText;
-    final muted = isDark ? darkMutedText : lightMutedText;
+    final palette = AppPalette.fromBrightness(brightness);
+    final background = palette.pageBackground;
+    final surface = palette.card;
+    final text = palette.primaryText;
+    final muted = palette.secondaryText;
 
     final colorScheme = ColorScheme.fromSeed(
       seedColor: forestGreen,
@@ -110,6 +132,7 @@ class AppTheme {
       useMaterial3: true,
       brightness: brightness,
       colorScheme: colorScheme,
+      extensions: [palette],
       scaffoldBackgroundColor: background,
       fontFamily: 'Roboto',
       appBarTheme: AppBarTheme(
@@ -156,7 +179,8 @@ class AppTheme {
         hintStyle: TextStyle(color: muted.withValues(alpha: 0.78)),
         prefixIconColor: isDark ? darkMutedText : forestGreen,
         suffixIconColor: isDark ? darkMutedText : forestGreen,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
         border: _inputBorder(isDark, false),
         enabledBorder: _inputBorder(isDark, false),
         focusedBorder: _inputBorder(isDark, true),
@@ -171,7 +195,8 @@ class AppTheme {
               isDark ? const Color(0xFF566044) : const Color(0xFFB7C6A9),
           disabledForegroundColor: isDark ? darkMutedText : lightMutedText,
           minimumSize: const Size(double.infinity, 54),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
           elevation: 0,
         ),
@@ -184,8 +209,18 @@ class AppTheme {
                 ? metallicGold.withValues(alpha: 0.48)
                 : earthBrown.withValues(alpha: 0.58),
           ),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
           minimumSize: const Size(double.infinity, 48),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: isDark ? metallicGold : forestGreen,
+          textStyle: const TextStyle(fontWeight: FontWeight.w800),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
         ),
       ),
       switchTheme: SwitchThemeData(

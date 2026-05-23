@@ -4,13 +4,10 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 import 'src/core/theme/app_theme.dart';
+import 'src/core/theme/app_theme_controller.dart';
 import 'src/core/storage/hive_init.dart';
 import 'src/routing/router.dart';
-
-// Global provider to manage Theme state
-final themeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.dark);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +31,7 @@ void main() async {
     };
   }
 
-  await initHive();  // your existing code
+  await initHive(); // your existing code
 
   runApp(const ProviderScope(child: MyApp()));
 }

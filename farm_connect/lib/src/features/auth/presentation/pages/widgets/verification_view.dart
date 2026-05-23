@@ -14,13 +14,24 @@ class VerificationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = AppTheme.palette(context);
     final textColor = AppTheme.appText(context);
     final mutedColor = AppTheme.appMutedText(context);
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppTheme.appSurface(context),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: palette.shellGradient,
+        ),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        border: Border(
+          top: BorderSide(
+            color: AppTheme.metallicGold.withValues(alpha: 0.48),
+            width: 2,
+          ),
+        ),
       ),
       child: SafeArea(
         top: false,
@@ -39,13 +50,27 @@ class VerificationView extends StatelessWidget {
             Container(
               width: 76,
               height: 76,
+              padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: AppTheme.metallicGold, width: 1.6),
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFFFFF6D0),
+                    Color(0xFFB8842D),
+                    Color(0xFFFFFFFF),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.28),
+                    blurRadius: 14,
+                    offset: const Offset(0, 7),
+                  ),
+                ],
               ),
               child: ClipOval(
                 child: Image.network(
-                  AppTheme.appIconUrl,
+                  AppTheme.appIconUrlFor(context),
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) => Image.asset(
                     'assets/images/farm_connect_app_icon.png',
@@ -78,8 +103,12 @@ class VerificationView extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed: () async => onResend(),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF33D17A),
-                  foregroundColor: const Color(0xFF03240F),
+                  backgroundColor: AppTheme.isDark(context)
+                      ? AppTheme.metallicGold
+                      : AppTheme.forestGreen,
+                  foregroundColor: AppTheme.isDark(context)
+                      ? const Color(0xFF102116)
+                      : Colors.white,
                   minimumSize: const Size(double.infinity, 52),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(999),

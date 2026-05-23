@@ -106,18 +106,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   duration: const Duration(milliseconds: 220),
                   curve: Curves.easeOut,
                   decoration: BoxDecoration(
-                    color: isSelected
-                        ? accent.withValues(alpha: 0.18)
-                        : surface,
-                    borderRadius: BorderRadius.circular(14),
+                    color:
+                        isSelected ? accent.withValues(alpha: 0.18) : surface,
+                    borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: isSelected
-                          ? accent
-                          : muted.withValues(alpha: 0.28),
+                      color:
+                          isSelected ? accent : muted.withValues(alpha: 0.28),
                     ),
                   ),
                   child: InkWell(
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(8),
                     onTap: () => setState(() => selectedRole = role),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -138,9 +136,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           Text(
                             role[0].toUpperCase() + role.substring(1),
                             style: TextStyle(
-                              color: isSelected
-                                  ? text
-                                  : muted,
+                              color: isSelected ? text : muted,
                               fontWeight: FontWeight.w600,
                             ),
                           ),

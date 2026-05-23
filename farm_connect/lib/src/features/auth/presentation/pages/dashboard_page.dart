@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../application/auth_controller.dart';
+import 'widgets/auth_background.dart';
 import 'widgets/auth_shell.dart';
 
 class DashboardPage extends ConsumerWidget {
@@ -16,14 +17,24 @@ class DashboardPage extends ConsumerWidget {
     final authState = ref.watch(authControllerProvider);
 
     return authState.when(
-      loading: () => const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+      loading: () => Scaffold(
+        backgroundColor: AppTheme.appBackground(context),
+        body: const AuthBackground(
+          child: Center(child: CircularProgressIndicator()),
+        ),
       ),
       error: (e, _) => Scaffold(
-        body: Center(
-          child: Text(
-            'Error loading session: $e',
-            textAlign: TextAlign.center,
+        backgroundColor: AppTheme.appBackground(context),
+        body: AuthBackground(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Text(
+                'Error loading session: $e',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AppTheme.appText(context)),
+              ),
+            ),
           ),
         ),
       ),

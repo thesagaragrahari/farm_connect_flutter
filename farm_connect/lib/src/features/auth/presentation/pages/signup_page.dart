@@ -85,16 +85,14 @@ class _SignupPageState extends ConsumerState<SignupPage> {
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeOut,
               decoration: BoxDecoration(
-                color: selected
-                    ? accent.withValues(alpha: 0.18)
-                    : surface,
-                borderRadius: BorderRadius.circular(14),
+                color: selected ? accent.withValues(alpha: 0.18) : surface,
+                borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: selected ? accent : muted.withValues(alpha: 0.28),
                 ),
               ),
               child: InkWell(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(8),
                 onTap: () => setState(() => role = item),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(

@@ -1,4 +1,5 @@
 import 'package:farm_connect/src/core/util/go_router_refresh_stream.dart';
+import 'package:farm_connect/src/features/splash/presentation/splash_page.dart';
 import 'package:farm_connect/src/features/user/presentation/pages/active_users.dart';
 import 'package:farm_connect/src/features/user/presentation/pages/edit_profile_screen.dart';
 import 'package:farm_connect/src/features/user/presentation/pages/farmer_details_screen.dart';
@@ -25,7 +26,7 @@ import '../features/auth/presentation/pages/dashboard_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
-    initialLocation: '/preview',
+    initialLocation: '/splash',
     //initialLocation: '/login',
 
     // Use the refresh notifier that listens to authControllerProvider
@@ -39,6 +40,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final loggedIn = authAsync.hasValue && authAsync.value != null;
 
       const previewRoutes = <String>{
+        '/splash',
         '/preview',
         '/preview/auth/login',
         '/preview/auth/signup',
@@ -86,6 +88,11 @@ final routerProvider = Provider<GoRouter>((ref) {
     },
 
     routes: [
+      GoRoute(
+        path: '/splash',
+        pageBuilder: (context, state) =>
+            _buildAnimatedPage(state, const SplashPage()),
+      ),
       GoRoute(
         path: '/preview',
         pageBuilder: (context, state) =>

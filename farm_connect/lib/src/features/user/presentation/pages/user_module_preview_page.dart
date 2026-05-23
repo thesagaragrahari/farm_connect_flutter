@@ -1,21 +1,21 @@
+import 'package:farm_connect/src/core/common_widgets/app_shell_controls.dart';
 import 'package:farm_connect/src/core/theme/app_theme.dart';
+import 'package:farm_connect/src/core/theme/app_theme_controller.dart';
+import 'package:farm_connect/src/core/theme/app_palette.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class UserModulePreviewPage extends StatefulWidget {
+class UserModulePreviewPage extends ConsumerStatefulWidget {
   const UserModulePreviewPage({super.key});
 
   @override
-  State<UserModulePreviewPage> createState() => _UserModulePreviewPageState();
+  ConsumerState<UserModulePreviewPage> createState() =>
+      _UserModulePreviewPageState();
 }
 
-class _UserModulePreviewPageState extends State<UserModulePreviewPage> {
+class _UserModulePreviewPageState extends ConsumerState<UserModulePreviewPage> {
   int selectedTab = 0;
-  bool desktopMode = false;
-  bool lightMode = false;
-
-  static const _iconUrl =
-      'https://farm-connect-backend-1.onrender.com/images/emails-app.png';
 
   static const _tabs = <_PreviewTab>[
     _PreviewTab(label: 'Auth', icon: Icons.lock_rounded),
@@ -27,6 +27,14 @@ class _UserModulePreviewPageState extends State<UserModulePreviewPage> {
   ];
 
   static const _pages = <_PreviewRoute>[
+    _PreviewRoute(
+      title: 'Splash Screen',
+      subtitle: 'Premium animated app launch experience',
+      path: '/splash',
+      icon: Icons.auto_awesome_rounded,
+      tabIndex: 0,
+      badge: 'Launch',
+    ),
     _PreviewRoute(
       title: 'Login',
       subtitle: 'Role based email and password login screen',
@@ -159,7 +167,10 @@ class _UserModulePreviewPageState extends State<UserModulePreviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    final palette = _PreviewPalette(lightMode: lightMode);
+    final themeMode = ref.watch(themeProvider);
+    final lightMode = themeMode == ThemeMode.light;
+    final desktopMode = ref.watch(desktopModeProvider);
+    final palette = AppTheme.palette(context);
     final pages = _pages
         .where((page) => page.tabIndex == selectedTab)
         .toList(growable: false);
@@ -192,7 +203,7 @@ class _UserModulePreviewPageState extends State<UserModulePreviewPage> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(desktopMode ? 16 : 34),
                 border: Border.all(
-                  color: _metallicGold.withValues(alpha: 0.48),
+                  color: AppTheme.metallicGold.withValues(alpha: 0.48),
                   width: desktopMode ? 1 : 2,
                 ),
                 gradient: LinearGradient(
@@ -215,7 +226,7 @@ class _UserModulePreviewPageState extends State<UserModulePreviewPage> {
               ),
               clipBehavior: Clip.antiAlias,
               child: _PreviewShell(
-                iconUrl: _iconUrl,
+                iconUrl: AppTheme.appIconUrlFor(context),
                 tabs: _tabs,
                 pages: pages,
                 selectedTab: selectedTab,
@@ -223,8 +234,6 @@ class _UserModulePreviewPageState extends State<UserModulePreviewPage> {
                 lightMode: lightMode,
                 palette: palette,
                 onTabChanged: (index) => setState(() => selectedTab = index),
-                onModeChanged: (value) => setState(() => desktopMode = value),
-                onThemeChanged: (value) => setState(() => lightMode = value),
               ),
             ),
           ),
@@ -241,10 +250,8 @@ class _PreviewShell extends StatelessWidget {
   final int selectedTab;
   final bool desktopMode;
   final bool lightMode;
-  final _PreviewPalette palette;
+  final AppPalette palette;
   final ValueChanged<int> onTabChanged;
-  final ValueChanged<bool> onModeChanged;
-  final ValueChanged<bool> onThemeChanged;
 
   const _PreviewShell({
     required this.iconUrl,
@@ -255,8 +262,6 @@ class _PreviewShell extends StatelessWidget {
     required this.lightMode,
     required this.palette,
     required this.onTabChanged,
-    required this.onModeChanged,
-    required this.onThemeChanged,
   });
 
   @override
@@ -265,10 +270,7 @@ class _PreviewShell extends StatelessWidget {
       children: [
         _PreviewAppBar(
           iconUrl: iconUrl,
-          desktopMode: desktopMode,
           lightMode: lightMode,
-          onModeChanged: onModeChanged,
-          onThemeChanged: onThemeChanged,
         ),
         _PreviewToggleBar(
           tabs: tabs,
@@ -294,17 +296,11 @@ class _PreviewShell extends StatelessWidget {
 
 class _PreviewAppBar extends StatelessWidget {
   final String iconUrl;
-  final bool desktopMode;
   final bool lightMode;
-  final ValueChanged<bool> onModeChanged;
-  final ValueChanged<bool> onThemeChanged;
 
   const _PreviewAppBar({
     required this.iconUrl,
-    required this.desktopMode,
     required this.lightMode,
-    required this.onModeChanged,
-    required this.onThemeChanged,
   });
 
   @override
@@ -404,110 +400,8 @@ class _PreviewAppBar extends StatelessWidget {
             color: lightMode ? const Color(0xFF173F1D) : Colors.white,
           ),
           const SizedBox(width: 8),
-          _ModeSwitch(value: desktopMode, onChanged: onModeChanged),
-          const SizedBox(width: 8),
-          _ThemeSwitch(value: lightMode, onChanged: onThemeChanged),
+          const AppShellControls(),
         ],
-      ),
-    );
-  }
-}
-
-class _ModeSwitch extends StatelessWidget {
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  const _ModeSwitch({
-    required this.value,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: value ? 'Desktop mode' : 'Mobile mode',
-      child: InkWell(
-        borderRadius: BorderRadius.circular(999),
-        onTap: () => onChanged(!value),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          width: 58,
-          height: 32,
-          padding: const EdgeInsets.all(3),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(999),
-            color: Colors.black.withValues(alpha: 0.24),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.36)),
-          ),
-          child: AnimatedAlign(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeOut,
-            alignment: value ? Alignment.centerRight : Alignment.centerLeft,
-            child: Container(
-              width: 26,
-              height: 26,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-              ),
-              child: Icon(
-                value ? Icons.desktop_windows_rounded : Icons.phone_iphone_rounded,
-                size: 15,
-                color: AppTheme.forestGreen,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ThemeSwitch extends StatelessWidget {
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  const _ThemeSwitch({
-    required this.value,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: value ? 'Light mode' : 'Dark mode',
-      child: InkWell(
-        borderRadius: BorderRadius.circular(999),
-        onTap: () => onChanged(!value),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          width: 58,
-          height: 32,
-          padding: const EdgeInsets.all(3),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(999),
-            color: Colors.black.withValues(alpha: 0.24),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.36)),
-          ),
-          child: AnimatedAlign(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeOut,
-            alignment: value ? Alignment.centerRight : Alignment.centerLeft,
-            child: Container(
-              width: 26,
-              height: 26,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-              ),
-              child: Icon(
-                value ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-                size: 15,
-                color: AppTheme.earthBrown,
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }
@@ -516,7 +410,7 @@ class _ThemeSwitch extends StatelessWidget {
 class _PreviewToggleBar extends StatelessWidget {
   final List<_PreviewTab> tabs;
   final int selectedTab;
-  final _PreviewPalette palette;
+  final AppPalette palette;
   final ValueChanged<int> onChanged;
 
   const _PreviewToggleBar({
@@ -548,7 +442,9 @@ class _PreviewToggleBar extends StatelessWidget {
                     tabs[index].label,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: selected ? palette.primaryText : palette.secondaryText,
+                      color: selected
+                          ? palette.primaryText
+                          : palette.secondaryText,
                       fontSize: 13,
                       fontWeight: FontWeight.w800,
                     ),
@@ -559,7 +455,8 @@ class _PreviewToggleBar extends StatelessWidget {
                     width: selected ? 38 : 0,
                     height: 3,
                     decoration: BoxDecoration(
-                      color: selected ? _metallicGold : Colors.transparent,
+                      color:
+                          selected ? AppTheme.metallicGold : Colors.transparent,
                       borderRadius: BorderRadius.circular(999),
                     ),
                   ),
@@ -575,7 +472,7 @@ class _PreviewToggleBar extends StatelessWidget {
 
 class _MobilePageList extends StatelessWidget {
   final List<_PreviewRoute> pages;
-  final _PreviewPalette palette;
+  final AppPalette palette;
 
   const _MobilePageList({
     required this.pages,
@@ -601,7 +498,7 @@ class _MobilePageList extends StatelessWidget {
 
 class _DesktopPageGrid extends StatelessWidget {
   final List<_PreviewRoute> pages;
-  final _PreviewPalette palette;
+  final AppPalette palette;
 
   const _DesktopPageGrid({
     required this.pages,
@@ -629,7 +526,7 @@ class _DesktopPageGrid extends StatelessWidget {
 
 class _WhatsAppPageTile extends StatelessWidget {
   final _PreviewRoute page;
-  final _PreviewPalette palette;
+  final AppPalette palette;
 
   const _WhatsAppPageTile({
     required this.page,
@@ -700,7 +597,7 @@ class _WhatsAppPageTile extends StatelessWidget {
 
 class _DesktopPageCard extends StatelessWidget {
   final _PreviewRoute page;
-  final _PreviewPalette palette;
+  final AppPalette palette;
 
   const _DesktopPageCard({
     required this.page,
@@ -719,7 +616,9 @@ class _DesktopPageCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: _metallicGold.withValues(alpha: 0.42)),
+            border: Border.all(
+              color: AppTheme.metallicGold.withValues(alpha: 0.42),
+            ),
             gradient: LinearGradient(
               colors: [
                 (palette.lightMode
@@ -774,7 +673,7 @@ class _DesktopPageCard extends StatelessWidget {
 
 class _MetallicAvatar extends StatelessWidget {
   final IconData icon;
-  final _PreviewPalette palette;
+  final AppPalette palette;
 
   const _MetallicAvatar({
     required this.icon,
@@ -793,7 +692,7 @@ class _MetallicAvatar extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [
             Colors.white.withValues(alpha: 0.95),
-            _metallicGold,
+            AppTheme.metallicGold,
             AppTheme.earthBrown,
             AppTheme.forestGreen,
           ],
@@ -814,7 +713,7 @@ class _MetallicAvatar extends StatelessWidget {
 class _PreviewBottomBar extends StatelessWidget {
   final List<_PreviewTab> tabs;
   final int selectedTab;
-  final _PreviewPalette palette;
+  final AppPalette palette;
   final ValueChanged<int> onChanged;
 
   const _PreviewBottomBar({
@@ -830,7 +729,11 @@ class _PreviewBottomBar extends StatelessWidget {
       height: 70,
       decoration: BoxDecoration(
         color: palette.bottomBar,
-        border: Border(top: BorderSide(color: _metallicGold.withValues(alpha: 0.26))),
+        border: Border(
+          top: BorderSide(
+            color: AppTheme.metallicGold.withValues(alpha: 0.26),
+          ),
+        ),
       ),
       child: Row(
         children: List.generate(tabs.length, (index) {
@@ -854,7 +757,8 @@ class _PreviewBottomBar extends StatelessWidget {
                     height: 3,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(999),
-                      color: selected ? _metallicGold : Colors.transparent,
+                      color:
+                          selected ? AppTheme.metallicGold : Colors.transparent,
                     ),
                   ),
                 ],
@@ -894,62 +798,3 @@ class _PreviewRoute {
     required this.badge,
   });
 }
-
-class _PreviewPalette {
-  final bool lightMode;
-
-  const _PreviewPalette({required this.lightMode});
-
-  Color get pageBackground =>
-      lightMode ? const Color(0xFFF4E9D6) : const Color(0xFF07130B);
-
-  List<Color> get outerGradient => lightMode
-      ? const [
-          Color(0xFFF8EEDC),
-          Color(0xFFEEDDBE),
-          Color(0xFFDCC393),
-        ]
-      : const [
-          Color(0xFF07130B),
-          Color(0xFF102817),
-          Color(0xFF2A1F11),
-        ];
-
-  List<Color> get shellGradient => lightMode
-      ? const [
-          Color(0xFFFFF5E6),
-          Color(0xFFF3E1BD),
-          Color(0xFFE8D0A3),
-        ]
-      : const [
-          Color(0xFF102116),
-          Color(0xFF07180D),
-          Color(0xFF241A0E),
-        ];
-
-  Color get tabBackground =>
-      lightMode ? const Color(0xFFF0DCB8) : const Color(0xFF142319);
-
-  Color get bottomBar =>
-      lightMode ? const Color(0xFFE9D2A8) : const Color(0xFF0B1A10);
-
-  Color get card =>
-      lightMode ? const Color(0xFFFFF1D9) : const Color(0xFF13251A);
-
-  Color get divider =>
-      lightMode ? const Color(0xFFD2B47C) : const Color(0xFF3B4A2F);
-
-  Color get primaryText =>
-      lightMode ? const Color(0xFF2B1B0D) : const Color(0xFFEAF8E5);
-
-  Color get secondaryText =>
-      lightMode ? const Color(0xFF6E5630) : const Color(0xFFB7D6A9);
-
-  Color get iconActive =>
-      lightMode ? AppTheme.forestGreen : Colors.white;
-
-  Color get iconInactive =>
-      lightMode ? const Color(0xFF4C7A45) : const Color(0xFF92A08B);
-}
-
-const _metallicGold = Color(0xFFD4A84F);
