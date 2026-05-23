@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:farm_connect/src/core/common_widgets/app_shell_controls.dart';
 import 'package:farm_connect/src/core/theme/app_theme.dart';
 import 'package:farm_connect/src/core/theme/app_theme_controller.dart';
@@ -186,56 +188,83 @@ class _UserModulePreviewPageState extends ConsumerState<UserModulePreviewPage> {
           ),
         ),
         child: SafeArea(
-          child: Center(
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 260),
-              curve: Curves.easeOutCubic,
-              width: desktopMode ? double.infinity : 430,
-              height: desktopMode ? double.infinity : 860,
-              constraints: BoxConstraints(
-                maxWidth: desktopMode ? 1180 : 430,
-                maxHeight: desktopMode ? double.infinity : 860,
-              ),
-              margin: EdgeInsets.symmetric(
-                horizontal: desktopMode ? 24 : 14,
-                vertical: desktopMode ? 18 : 12,
-              ),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(desktopMode ? 16 : 34),
-                border: Border.all(
-                  color: AppTheme.metallicGold.withValues(alpha: 0.48),
-                  width: desktopMode ? 1 : 2,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final horizontalMargin = desktopMode ? 24.0 : 14.0;
+              final verticalMargin = desktopMode ? 18.0 : 12.0;
+              final availableWidth = constraints.maxWidth.isFinite
+                  ? constraints.maxWidth
+                  : MediaQuery.sizeOf(context).width;
+              final availableHeight = constraints.maxHeight.isFinite
+                  ? constraints.maxHeight
+                  : MediaQuery.sizeOf(context).height;
+              final shellWidth = math.max(
+                0.0,
+                math.min(
+                  desktopMode ? 1180.0 : 430.0,
+                  availableWidth - (horizontalMargin * 2),
                 ),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: palette.shellGradient,
+              );
+              final shellHeight = math.max(
+                0.0,
+                desktopMode
+                    ? availableHeight - (verticalMargin * 2)
+                    : math.min(
+                        860.0,
+                        availableHeight - (verticalMargin * 2),
+                      ),
+              );
+
+              return Center(
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 260),
+                  curve: Curves.easeOutCubic,
+                  width: shellWidth,
+                  height: shellHeight,
+                  margin: EdgeInsets.symmetric(
+                    horizontal: horizontalMargin,
+                    vertical: verticalMargin,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius:
+                        BorderRadius.circular(desktopMode ? 16 : 34),
+                    border: Border.all(
+                      color: AppTheme.metallicGold.withValues(alpha: 0.48),
+                      width: desktopMode ? 1 : 2,
+                    ),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: palette.shellGradient,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.55),
+                        blurRadius: 28,
+                        offset: const Offset(0, 16),
+                      ),
+                      BoxShadow(
+                        color: AppTheme.forestGreen.withValues(alpha: 0.20),
+                        blurRadius: 42,
+                        offset: const Offset(0, 0),
+                      ),
+                    ],
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: _PreviewShell(
+                    iconUrl: AppTheme.appIconUrlFor(context),
+                    tabs: _tabs,
+                    pages: pages,
+                    selectedTab: selectedTab,
+                    desktopMode: desktopMode,
+                    lightMode: lightMode,
+                    palette: palette,
+                    onTabChanged: (index) =>
+                        setState(() => selectedTab = index),
+                  ),
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.55),
-                    blurRadius: 28,
-                    offset: const Offset(0, 16),
-                  ),
-                  BoxShadow(
-                    color: AppTheme.forestGreen.withValues(alpha: 0.20),
-                    blurRadius: 42,
-                    offset: const Offset(0, 0),
-                  ),
-                ],
-              ),
-              clipBehavior: Clip.antiAlias,
-              child: _PreviewShell(
-                iconUrl: AppTheme.appIconUrlFor(context),
-                tabs: _tabs,
-                pages: pages,
-                selectedTab: selectedTab,
-                desktopMode: desktopMode,
-                lightMode: lightMode,
-                palette: palette,
-                onTabChanged: (index) => setState(() => selectedTab = index),
-              ),
-            ),
+              );
+            },
           ),
         ),
       ),

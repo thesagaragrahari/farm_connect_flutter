@@ -151,19 +151,28 @@ class UserController extends AsyncNotifier<UserState> {
     if (!reset && !current.hasMoreWorkers) return;
 
     final nextPage = reset ? 1 : current.workerPage;
-    final workers = await _repository.getAvailableWorkers(
-      skill: skill,
-      location: location,
-      page: nextPage,
-    );
+    try {
+      final workers = await _repository.getAvailableWorkers(
+        skill: skill,
+        location: location,
+        page: nextPage,
+      );
 
-    state = AsyncData(
-      current.copyWith(
-        workers: reset ? workers : [...current.workers, ...workers],
-        workerPage: nextPage + 1,
-        hasMoreWorkers: workers.isNotEmpty,
-      ),
-    );
+      state = AsyncData(
+        current.copyWith(
+          workers: reset ? workers : [...current.workers, ...workers],
+          workerPage: nextPage + 1,
+          hasMoreWorkers: workers.isNotEmpty,
+        ),
+      );
+    } on DioException {
+      state = AsyncData(
+        current.copyWith(
+          workers: reset ? const [] : current.workers,
+          hasMoreWorkers: false,
+        ),
+      );
+    }
   }
 
   Future<void> updateNotificationSettings({
