@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:farm_connect/src/core/theme/app_theme.dart';
+import 'package:farm_connect/src/core/layout/responsive_layout.dart';
 
 class ProfileSectionCard extends StatelessWidget {
   final String title;
@@ -16,10 +16,8 @@ class ProfileSectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: AppTheme.cardDecoration(context),
+    return AppSurface(
+      padding: const EdgeInsets.all(AppSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -29,6 +27,8 @@ class ProfileSectionCard extends StatelessWidget {
               const SizedBox(width: 10),
               Text(
                 title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w700,

@@ -91,8 +91,7 @@ class UserSettings {
     bool? showPhoneNumber,
   }) {
     return UserSettings(
-      notificationsEnabled:
-          notificationsEnabled ?? this.notificationsEnabled,
+      notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
       jobAlertsEnabled: jobAlertsEnabled ?? this.jobAlertsEnabled,
       profileVisible: profileVisible ?? this.profileVisible,
       showPhoneNumber: showPhoneNumber ?? this.showPhoneNumber,

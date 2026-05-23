@@ -47,14 +47,16 @@ class UserApiService {
   Future<UserProfileResponseDto> updateWorkerProfile(
     WorkerProfileRequestDto dto,
   ) async {
-    final res = await dio.post(UserEndpoints.completeWorker, data: dto.toJson());
+    final res =
+        await dio.post(UserEndpoints.completeWorker, data: dto.toJson());
     return UserProfileResponseDto.fromJson(_asMap(res.data));
   }
 
   Future<UserProfileResponseDto> updateFarmerProfile(
     FarmerProfileRequestDto dto,
   ) async {
-    final res = await dio.post(UserEndpoints.completeFarmer, data: dto.toJson());
+    final res =
+        await dio.post(UserEndpoints.completeFarmer, data: dto.toJson());
     return UserProfileResponseDto.fromJson(_asMap(res.data));
   }
 
@@ -103,7 +105,8 @@ class UserApiService {
 
   Future<String> deactivateAccount() async {
     final res = await dio.post(UserEndpoints.deactivateAccount);
-    return _extractMessage(res.data, fallback: 'Account deactivation requested.');
+    return _extractMessage(res.data,
+        fallback: 'Account deactivation requested.');
   }
 }
 

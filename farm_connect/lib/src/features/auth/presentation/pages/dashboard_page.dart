@@ -1,4 +1,5 @@
 import 'package:farm_connect/src/core/common_widgets/primary_button.dart';
+import 'package:farm_connect/src/routing/app_routes.dart';
 import 'package:farm_connect/src/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,7 +42,7 @@ class DashboardPage extends ConsumerWidget {
       data: (session) {
         if (session == null) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (context.mounted) context.go('/login');
+            if (context.mounted) context.go(AppRoutes.login);
           });
           return const SizedBox.shrink();
         }

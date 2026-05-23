@@ -55,25 +55,25 @@ class AppPalette extends ThemeExtension<AppPalette> {
 
   static const light = AppPalette(
     lightMode: true,
-    pageBackground: Color(0xFFF4E9D6),
+    pageBackground: Color(0xFFF8F1E3),
     outerGradient: [
-      Color(0xFFF8EEDC),
-      Color(0xFFEEDDBE),
-      Color(0xFFDCC393),
+      Color(0xFFFFFAEF),
+      Color(0xFFEAF3DF),
+      Color(0xFFE8D7AE),
     ],
     shellGradient: [
-      Color(0xFFFFF5E6),
-      Color(0xFFF3E1BD),
-      Color(0xFFE8D0A3),
+      Color(0xFFFFFAEE),
+      Color(0xFFEDF5E4),
+      Color(0xFFE9D5A4),
     ],
-    tabBackground: Color(0xFFF0DCB8),
-    bottomBar: Color(0xFFE9D2A8),
-    card: Color(0xFFFFF1D9),
-    divider: Color(0xFFD2B47C),
-    primaryText: Color(0xFF2B1B0D),
-    secondaryText: Color(0xFF6E5630),
+    tabBackground: Color(0xFFEAF2DE),
+    bottomBar: Color(0xFFF8EEDA),
+    card: Color(0xFFFFFBF1),
+    divider: Color(0xFFD7BF82),
+    primaryText: Color(0xFF213A22),
+    secondaryText: Color(0xFF647050),
     iconActive: Color(0xFF245C27),
-    iconInactive: Color(0xFF4C7A45),
+    iconInactive: Color(0xFF6E7D5A),
   );
 
   static AppPalette fromBrightness(Brightness brightness) {

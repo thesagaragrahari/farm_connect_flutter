@@ -55,7 +55,8 @@ class AuthController extends AsyncNotifier<AuthSession?> {
     _repository = ref.watch(authRepositoryProvider);
     final token = await _repository.storage.readToken();
     if (token != null && token.isNotEmpty) {
-      return AuthSession(token: token);
+      final role = await _repository.storage.readRole();
+      return AuthSession(token: token, role: role);
     }
     return null;
   }
@@ -66,7 +67,8 @@ class AuthController extends AsyncNotifier<AuthSession?> {
       final session = await _repository.login(email, password, role);
       state = AsyncData(session);
     } on DioException catch (e, stackTrace) {
-      state = AsyncError(_extractDioMessage(e, fallback: 'Login failed'), stackTrace);
+      state = AsyncError(
+          _extractDioMessage(e, fallback: 'Login failed'), stackTrace);
     } catch (e, stackTrace) {
       state = AsyncError(e.toString(), stackTrace);
     }
@@ -91,7 +93,8 @@ class AuthController extends AsyncNotifier<AuthSession?> {
     try {
       return await _repository.forgotPassword(email);
     } on DioException catch (e) {
-      throw Exception(_extractDioMessage(e, fallback: 'Failed to send reset link'));
+      throw Exception(
+          _extractDioMessage(e, fallback: 'Failed to send reset link'));
     } catch (e) {
       throw Exception(e.toString());
     }
@@ -117,7 +120,8 @@ class AuthController extends AsyncNotifier<AuthSession?> {
     try {
       return await _repository.verifyEmail(token);
     } on DioException catch (e) {
-      throw Exception(_extractDioMessage(e, fallback: 'Email verification failed'));
+      throw Exception(
+          _extractDioMessage(e, fallback: 'Email verification failed'));
     } catch (e) {
       throw Exception(e.toString());
     }
@@ -127,7 +131,8 @@ class AuthController extends AsyncNotifier<AuthSession?> {
     try {
       return await _repository.resendVerificationEmail();
     } on DioException catch (e) {
-      throw Exception(_extractDioMessage(e, fallback: 'Failed to resend verification email'));
+      throw Exception(_extractDioMessage(e,
+          fallback: 'Failed to resend verification email'));
     } catch (e) {
       throw Exception(e.toString());
     }

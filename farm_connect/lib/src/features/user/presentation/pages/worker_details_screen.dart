@@ -1,5 +1,8 @@
 import 'package:farm_connect/src/core/common_widgets/custom_text_field.dart';
+import 'package:farm_connect/src/routing/app_routes.dart';
 import 'package:farm_connect/src/core/common_widgets/primary_button.dart';
+import 'package:farm_connect/src/core/common_widgets/app_top_bar.dart';
+import 'package:farm_connect/src/core/layout/responsive_layout.dart';
 import 'package:farm_connect/src/features/user/application/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,7 +15,8 @@ class WorkerDetailsScreen extends ConsumerStatefulWidget {
   const WorkerDetailsScreen({super.key});
 
   @override
-  ConsumerState<WorkerDetailsScreen> createState() => _WorkerDetailsScreenState();
+  ConsumerState<WorkerDetailsScreen> createState() =>
+      _WorkerDetailsScreenState();
 }
 
 class _WorkerDetailsScreenState extends ConsumerState<WorkerDetailsScreen> {
@@ -56,101 +60,58 @@ class _WorkerDetailsScreenState extends ConsumerState<WorkerDetailsScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Worker Details')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      appBar: appTopBar(title: const Text('Worker Details')),
+      body: ResponsiveForm(
+        formKey: _formKey,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  const Expanded(
-                    child: Text(
-                      'Skills',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-                    ),
-                  ),
-                  TextButton.icon(
-                    onPressed: _selectSkills,
-                    icon: const Icon(Icons.add_rounded),
-                    label: const Text('Edit'),
-                  ),
-                ],
+              Expanded(
+                child: Text(
+                  'Skills',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
               ),
-              SkillChipPicker(
-                skills: skills.isEmpty ? kFarmSkills.take(4).toList() : skills,
-                selectedSkills: skills,
-                onChanged: (_) {},
-              ),
-              const SizedBox(height: 18),
-              SwitchListTile.adaptive(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('Available for work'),
-                value: isAvailable,
-                onChanged: (value) => setState(() => isAvailable = value),
-              ),
-              const SizedBox(height: 12),
-              CustomTextField(
-                controller: experienceController,
-                label: 'Experience',
-                hint: '5 years',
-                prefixIcon: Icons.timeline_outlined,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: wageController,
-                label: 'Expected Wage',
-                hint: '500',
-                prefixIcon: Icons.currency_rupee_rounded,
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: workTypeController,
-                label: 'Preferred Work Type',
-                hint: 'Daily, seasonal, contract',
-                prefixIcon: Icons.work_outline_rounded,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: radiusController,
-                label: 'Work Radius',
-                hint: '10 km',
-                prefixIcon: Icons.radar_outlined,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: locationController,
-                label: 'Work Location',
-                hint: 'Preferred village or district',
-                prefixIcon: Icons.location_on_outlined,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: historyController,
-                label: 'Previous Work History',
-                hint: 'Harvesting wheat, irrigation support',
-                prefixIcon: Icons.history_outlined,
-                maxLines: 3,
-              ),
-              const SizedBox(height: 28),
-              PrimaryButton(
-                text: 'SAVE WORKER DETAILS',
-                isLoading: userState?.isSaving ?? false,
-                trailingIcon: Icons.save_outlined,
-                onPressed: _save,
+              TextButton.icon(
+                onPressed: _selectSkills,
+                icon: const Icon(Icons.add_rounded),
+                label: const Text('Edit'),
               ),
             ],
           ),
-        ),
+          SkillChipPicker(
+            skills: skills.isEmpty ? kFarmSkills.take(4).toList() : skills,
+            selectedSkills: skills,
+            onChanged: (_) {},
+          ),
+          SwitchListTile.adaptive(
+            contentPadding: EdgeInsets.zero,
+            title: const Text('Available for work'),
+            value: isAvailable,
+            onChanged: (value) => setState(() => isAvailable = value),
+          ),
+          _WorkerFieldGrid(
+            experienceController: experienceController,
+            wageController: wageController,
+            workTypeController: workTypeController,
+            radiusController: radiusController,
+            locationController: locationController,
+            historyController: historyController,
+          ),
+          PrimaryButton(
+            text: 'SAVE WORKER DETAILS',
+            isLoading: userState?.isSaving ?? false,
+            trailingIcon: Icons.save_outlined,
+            onPressed: _save,
+          ),
+        ],
       ),
     );
   }
 
   Future<void> _selectSkills() async {
-    final result = await context.push<List<String>>('/profile/worker/skills');
+    final result = await context.push<List<String>>(AppRoutes.workerSkills);
     if (result == null) return;
     setState(() {
       skills
@@ -178,6 +139,96 @@ class _WorkerDetailsScreenState extends ConsumerState<WorkerDetailsScreen> {
           previousWorkHistory: _splitValues(historyController.text),
         );
     if (mounted && ref.read(userControllerProvider).hasValue) context.pop();
+  }
+}
+
+class _WorkerFieldGrid extends StatelessWidget {
+  final TextEditingController experienceController;
+  final TextEditingController wageController;
+  final TextEditingController workTypeController;
+  final TextEditingController radiusController;
+  final TextEditingController locationController;
+  final TextEditingController historyController;
+
+  const _WorkerFieldGrid({
+    required this.experienceController,
+    required this.wageController,
+    required this.workTypeController,
+    required this.radiusController,
+    required this.locationController,
+    required this.historyController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final fields = [
+      CustomTextField(
+        controller: experienceController,
+        label: 'Experience',
+        hint: '5 years',
+        prefixIcon: Icons.timeline_outlined,
+      ),
+      CustomTextField(
+        controller: wageController,
+        label: 'Expected Wage',
+        hint: '500',
+        prefixIcon: Icons.currency_rupee_rounded,
+        keyboardType: TextInputType.number,
+      ),
+      CustomTextField(
+        controller: workTypeController,
+        label: 'Preferred Work Type',
+        hint: 'Daily, seasonal, contract',
+        prefixIcon: Icons.work_outline_rounded,
+      ),
+      CustomTextField(
+        controller: radiusController,
+        label: 'Work Radius',
+        hint: '10 km',
+        prefixIcon: Icons.radar_outlined,
+      ),
+      CustomTextField(
+        controller: locationController,
+        label: 'Work Location',
+        hint: 'Preferred village or district',
+        prefixIcon: Icons.location_on_outlined,
+      ),
+      CustomTextField(
+        controller: historyController,
+        label: 'Previous Work History',
+        hint: 'Harvesting wheat, irrigation support',
+        prefixIcon: Icons.history_outlined,
+        maxLines: 3,
+      ),
+    ];
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 720) {
+          return Column(
+            children: [
+              for (var i = 0; i < fields.length; i++) ...[
+                if (i > 0) const SizedBox(height: AppSpacing.lg),
+                fields[i],
+              ],
+            ],
+          );
+        }
+
+        return Wrap(
+          spacing: AppSpacing.lg,
+          runSpacing: AppSpacing.lg,
+          children: fields
+              .map(
+                (field) => SizedBox(
+                  width: (constraints.maxWidth - AppSpacing.lg) / 2,
+                  child: field,
+                ),
+              )
+              .toList(),
+        );
+      },
+    );
   }
 }
 

@@ -1,5 +1,7 @@
+import 'package:farm_connect/src/core/layout/responsive_layout.dart';
 import 'package:farm_connect/src/core/common_widgets/custom_text_field.dart';
 import 'package:farm_connect/src/core/common_widgets/primary_button.dart';
+import 'package:farm_connect/src/core/common_widgets/app_top_bar.dart';
 import 'package:farm_connect/src/features/user/application/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,7 +11,8 @@ class FarmerDetailsScreen extends ConsumerStatefulWidget {
   const FarmerDetailsScreen({super.key});
 
   @override
-  ConsumerState<FarmerDetailsScreen> createState() => _FarmerDetailsScreenState();
+  ConsumerState<FarmerDetailsScreen> createState() =>
+      _FarmerDetailsScreenState();
 }
 
 class _FarmerDetailsScreenState extends ConsumerState<FarmerDetailsScreen> {
@@ -42,51 +45,42 @@ class _FarmerDetailsScreenState extends ConsumerState<FarmerDetailsScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Farmer Details')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              CustomTextField(
-                controller: farmTypeController,
-                label: 'Farm Type',
-                hint: 'Own farm, leased farm',
-                prefixIcon: Icons.agriculture_outlined,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: landSizeController,
-                label: 'Land Size',
-                hint: '5 acres',
-                prefixIcon: Icons.landscape_outlined,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: categoryController,
-                label: 'Farming Category',
-                hint: 'Wheat, paddy, vegetables',
-                prefixIcon: Icons.grass_outlined,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: hiringController,
-                label: 'Seasonal Hiring Preferences',
-                hint: 'Harvesting, sowing, spraying',
-                prefixIcon: Icons.people_alt_outlined,
-                maxLines: 3,
-              ),
-              const SizedBox(height: 28),
-              PrimaryButton(
-                text: 'SAVE FARMER DETAILS',
-                isLoading: userState?.isSaving ?? false,
-                trailingIcon: Icons.save_outlined,
-                onPressed: _save,
-              ),
-            ],
+      appBar: appTopBar(title: const Text('Farmer Details')),
+      body: ResponsiveForm(
+        formKey: _formKey,
+        children: [
+          CustomTextField(
+            controller: farmTypeController,
+            label: 'Farm Type',
+            hint: 'Own farm, leased farm',
+            prefixIcon: Icons.agriculture_outlined,
           ),
-        ),
+          CustomTextField(
+            controller: landSizeController,
+            label: 'Land Size',
+            hint: '5 acres',
+            prefixIcon: Icons.landscape_outlined,
+          ),
+          CustomTextField(
+            controller: categoryController,
+            label: 'Farming Category',
+            hint: 'Wheat, paddy, vegetables',
+            prefixIcon: Icons.grass_outlined,
+          ),
+          CustomTextField(
+            controller: hiringController,
+            label: 'Seasonal Hiring Preferences',
+            hint: 'Harvesting, sowing, spraying',
+            prefixIcon: Icons.people_alt_outlined,
+            maxLines: 3,
+          ),
+          PrimaryButton(
+            text: 'SAVE FARMER DETAILS',
+            isLoading: userState?.isSaving ?? false,
+            trailingIcon: Icons.save_outlined,
+            onPressed: _save,
+          ),
+        ],
       ),
     );
   }

@@ -28,7 +28,8 @@ class UserListResponseDto {
 
   factory UserListResponseDto.fromJson(Map<String, dynamic> json) {
     final data = _dataMap(json);
-    final rawList = data['users'] ?? data['workers'] ?? data['items'] ?? data['data'];
+    final rawList =
+        data['users'] ?? data['workers'] ?? data['items'] ?? data['data'];
     final list = rawList is List ? rawList : const [];
     final page = _intValue(data['page'], fallback: 1);
     final limit = _intValue(data['limit'], fallback: list.length);
@@ -36,7 +37,9 @@ class UserListResponseDto {
     return UserListResponseDto(
       users: list
           .whereType<Map>()
-          .map((item) => UserProfileDto.fromJson(Map<String, dynamic>.from(item)).toEntity())
+          .map((item) =>
+              UserProfileDto.fromJson(Map<String, dynamic>.from(item))
+                  .toEntity())
           .toList(),
       page: page,
       limit: limit,
@@ -72,9 +75,13 @@ class UserProfileDto {
       bio: _stringOrNull(json['bio'] ?? json['about']),
       language: _stringOrNull(json['language']),
       profileCompletion: _completionValue(json),
-      workerProfile: worker != null ? WorkerProfileDto.fromJson(worker).toEntity() : null,
-      farmerProfile: farmer != null ? FarmerProfileDto.fromJson(farmer).toEntity() : null,
-      settings: UserSettingsDto.fromJson(_mapValue(json['settings']) ?? const {}).toEntity(),
+      workerProfile:
+          worker != null ? WorkerProfileDto.fromJson(worker).toEntity() : null,
+      farmerProfile:
+          farmer != null ? FarmerProfileDto.fromJson(farmer).toEntity() : null,
+      settings:
+          UserSettingsDto.fromJson(_mapValue(json['settings']) ?? const {})
+              .toEntity(),
     );
   }
 }
@@ -137,7 +144,8 @@ class UserSettingsDto {
 
   UserSettings toEntity() {
     return UserSettings(
-      notificationsEnabled: _boolValue(json['notificationsEnabled'], fallback: true),
+      notificationsEnabled:
+          _boolValue(json['notificationsEnabled'], fallback: true),
       jobAlertsEnabled: _boolValue(json['jobAlertsEnabled'], fallback: true),
       profileVisible: _boolValue(json['profileVisible'], fallback: true),
       showPhoneNumber: _boolValue(json['showPhoneNumber'], fallback: false),

@@ -1,4 +1,5 @@
 import 'package:farm_connect/src/core/common_widgets/custom_text_field.dart';
+import 'package:farm_connect/src/routing/app_routes.dart';
 import 'package:farm_connect/src/core/common_widgets/primary_button.dart';
 import 'package:farm_connect/src/features/auth/application/auth_controller.dart';
 import 'package:farm_connect/src/features/auth/presentation/pages/widgets/auth_shell.dart';
@@ -35,7 +36,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(message)));
-      context.go('/reset-password');
+      context.go(AppRoutes.resetPassword);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -53,7 +54,7 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       subtitle: 'Enter your account email and we will send a reset token.',
       footerActions: [
         TextButton(
-          onPressed: () => context.go('/login'),
+          onPressed: () => context.go(AppRoutes.login),
           child: const Text('Back to login'),
         ),
       ],

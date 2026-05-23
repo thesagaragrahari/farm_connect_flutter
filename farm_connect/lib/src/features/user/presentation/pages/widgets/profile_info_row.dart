@@ -18,26 +18,48 @@ class ProfileInfoRow extends StatelessWidget {
     final mutedColor = AppTheme.appMutedText(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 7),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 110,
-            child: Text(
-              label,
-              style: TextStyle(
-                color: mutedColor,
-                fontWeight: FontWeight.w600,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 360;
+          final labelWidget = Text(
+            label,
+            style: TextStyle(
+              color: mutedColor,
+              fontWeight: FontWeight.w600,
+            ),
+          );
+          final valueWidget = Text(
+            value.isEmpty ? 'Not added' : value,
+            style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
+            softWrap: true,
+          );
+
+          if (compact) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                labelWidget,
+                const SizedBox(height: 2),
+                valueWidget,
+              ],
+            );
+          }
+
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Flexible(
+                flex: 2,
+                child: labelWidget,
               ),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value.isEmpty ? 'Not added' : value,
-              style: TextStyle(color: textColor, fontWeight: FontWeight.w500),
-            ),
-          ),
-        ],
+              const SizedBox(width: 12),
+              Expanded(
+                flex: 3,
+                child: valueWidget,
+              ),
+            ],
+          );
+        },
       ),
     );
   }

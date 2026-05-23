@@ -1,5 +1,7 @@
+import 'package:farm_connect/src/core/layout/responsive_layout.dart';
 import 'package:farm_connect/src/core/common_widgets/custom_text_field.dart';
 import 'package:farm_connect/src/core/common_widgets/primary_button.dart';
+import 'package:farm_connect/src/core/common_widgets/app_top_bar.dart';
 import 'package:farm_connect/src/features/user/application/user_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -57,80 +59,73 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Profile')),
+      appBar: appTopBar(title: const Text('Edit Profile')),
       body: state.isLoading && profile == null
           ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    const CircleAvatar(
-                      radius: 42,
-                      child: Icon(Icons.person_outline_rounded, size: 42),
+          : ResponsiveForm(
+              formKey: _formKey,
+              children: [
+                Align(
+                  child: CircleAvatar(
+                    radius: ResponsiveLayout.isMobile(context) ? 40 : 48,
+                    child: Icon(
+                      Icons.person_outline_rounded,
+                      size: ResponsiveLayout.isMobile(context) ? 40 : 48,
                     ),
-                    const SizedBox(height: 20),
-                    CustomTextField(
-                      controller: nameController,
-                      label: 'Name',
-                      hint: 'Enter full name',
-                      prefixIcon: Icons.person_outline_rounded,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Name is required';
-                        }
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextField(
-                      controller: phoneController,
-                      label: 'Mobile Number',
-                      hint: 'Enter mobile number',
-                      prefixIcon: Icons.phone_outlined,
-                      keyboardType: TextInputType.phone,
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextField(
-                      controller: locationController,
-                      label: 'Location',
-                      hint: 'Enter location',
-                      prefixIcon: Icons.location_on_outlined,
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextField(
-                      controller: addressController,
-                      label: 'Address',
-                      hint: 'Village, district, state',
-                      prefixIcon: Icons.home_outlined,
-                      maxLines: 2,
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextField(
-                      controller: languageController,
-                      label: 'Language',
-                      hint: 'Hindi, English',
-                      prefixIcon: Icons.translate_outlined,
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextField(
-                      controller: bioController,
-                      label: 'Bio',
-                      hint: 'Tell people about your work',
-                      prefixIcon: Icons.notes_outlined,
-                      maxLines: 3,
-                    ),
-                    const SizedBox(height: 28),
-                    PrimaryButton(
-                      text: 'SAVE CHANGES',
-                      isLoading: userState?.isSaving ?? false,
-                      trailingIcon: Icons.save_outlined,
-                      onPressed: _save,
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                CustomTextField(
+                  controller: nameController,
+                  label: 'Name',
+                  hint: 'Enter full name',
+                  prefixIcon: Icons.person_outline_rounded,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Name is required';
+                    }
+                    return null;
+                  },
+                ),
+                CustomTextField(
+                  controller: phoneController,
+                  label: 'Mobile Number',
+                  hint: 'Enter mobile number',
+                  prefixIcon: Icons.phone_outlined,
+                  keyboardType: TextInputType.phone,
+                ),
+                CustomTextField(
+                  controller: locationController,
+                  label: 'Location',
+                  hint: 'Enter location',
+                  prefixIcon: Icons.location_on_outlined,
+                ),
+                CustomTextField(
+                  controller: addressController,
+                  label: 'Address',
+                  hint: 'Village, district, state',
+                  prefixIcon: Icons.home_outlined,
+                  maxLines: 2,
+                ),
+                CustomTextField(
+                  controller: languageController,
+                  label: 'Language',
+                  hint: 'Hindi, English',
+                  prefixIcon: Icons.translate_outlined,
+                ),
+                CustomTextField(
+                  controller: bioController,
+                  label: 'Bio',
+                  hint: 'Tell people about your work',
+                  prefixIcon: Icons.notes_outlined,
+                  maxLines: 3,
+                ),
+                PrimaryButton(
+                  text: 'SAVE CHANGES',
+                  isLoading: userState?.isSaving ?? false,
+                  trailingIcon: Icons.save_outlined,
+                  onPressed: _save,
+                ),
+              ],
             ),
     );
   }

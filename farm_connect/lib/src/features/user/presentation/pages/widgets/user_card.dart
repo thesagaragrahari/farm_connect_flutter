@@ -1,3 +1,5 @@
+import 'package:farm_connect/src/core/layout/responsive_layout.dart';
+import 'package:farm_connect/src/routing/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -19,50 +21,84 @@ class UserCard extends StatelessWidget {
     final textColor = AppTheme.appText(context);
     final mutedColor = AppTheme.appMutedText(context);
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: AppTheme.cardDecoration(context),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 28,
+    return AppSurface(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 340;
+          final avatar = CircleAvatar(
+            radius: compact ? 24 : 28,
             backgroundColor: AppTheme.isDark(context)
                 ? AppTheme.metallicGold
                 : AppTheme.forestGreen,
-            child: const Icon(Icons.person_outline_rounded, color: Colors.white),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name,
-                  style: TextStyle(
-                    color: textColor,
-                    fontWeight: FontWeight.bold,
-                  ),
+            child:
+                const Icon(Icons.person_outline_rounded, color: Colors.white),
+          );
+          final details = Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: textColor,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  style: TextStyle(color: mutedColor),
-                ),
-              ],
-            ),
-          ),
-          ElevatedButton(
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                subtitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: mutedColor),
+              ),
+            ],
+          );
+          final button = ElevatedButton(
             onPressed: () {
               final id = user?.id;
               if (id != null && id.isNotEmpty) {
-                context.push('/profile/public/$id');
+                context.push(AppRoutes.previewProfile(id));
                 return;
               }
-              context.push('/worker-profile');
+              context.push(AppRoutes.workerProfile);
             },
             child: const Text('View'),
-          ),
-        ],
+          );
+
+          if (compact) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    avatar,
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(child: details),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.md),
+                button,
+              ],
+            );
+          }
+
+          return Row(
+            children: [
+              avatar,
+              const SizedBox(width: AppSpacing.md),
+              Expanded(child: details),
+              const SizedBox(width: AppSpacing.md),
+              Flexible(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: button,
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

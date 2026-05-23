@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../layout/responsive_layout.dart';
 import '../theme/app_theme.dart';
 
 /// A Solid/Gradient Brown background used for earthy sections
@@ -49,12 +50,6 @@ class AdaptiveBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: isDarkMode ? const Color(0xFF121212) : Colors.white,
-      child: child,
-    );
+    return AppScreen(child: child);
   }
 }

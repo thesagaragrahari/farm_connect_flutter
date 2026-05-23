@@ -22,12 +22,16 @@ class AuthRepositoryImpl implements IAuthRepository {
     if (token == null || token.isEmpty) {
       throw DioException(
         requestOptions: RequestOptions(path: '/api/auth/login'),
-        error: res.message.isEmpty ? 'Token missing in login response.' : res.message,
+        error: res.message.isEmpty
+            ? 'Token missing in login response.'
+            : res.message,
       );
     }
 
+    final resolvedRole = res.data?.userProfile?.role ?? role;
     await storage.writeToken(token);
-    return AuthSession(token: token);
+    await storage.writeRole(resolvedRole);
+    return AuthSession(token: token, role: resolvedRole);
   }
 
   @override
@@ -37,12 +41,14 @@ class AuthRepositoryImpl implements IAuthRepository {
     String password,
     String role,
   ) async {
-    final dto = SignupRequestDto(name: name, email: email, password: password, role: role);
+    final dto = SignupRequestDto(
+        name: name, email: email, password: password, role: role);
     final res = await apiService.registerUser(dto);
 
     final token = res.resolvedToken;
     if (token != null && token.isNotEmpty) {
       await storage.writeToken(token);
+      await storage.writeRole(res.data?.userProfile?.role ?? role);
     }
 
     if (res.message.isNotEmpty) return res.message;

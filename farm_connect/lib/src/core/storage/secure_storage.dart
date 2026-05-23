@@ -9,5 +9,10 @@ class SecureStorage {
 
   Future<String?> readToken() async => _storage.read(key: 'auth_token');
 
+  Future<void> writeRole(String role) async =>
+      _storage.write(key: 'auth_role', value: role);
+
+  Future<String?> readRole() async => _storage.read(key: 'auth_role');
+
   Future<void> clear() async => _storage.deleteAll();
 }

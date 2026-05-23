@@ -18,7 +18,7 @@ final goRouterRefreshProvider = Provider<GoRouterRefreshNotifier>((ref) {
     (previous, next) {
       // Check if logged-in status changed
       final wasLoggedIn = previous?.value != null;
-      final isLoggedIn  = next.value != null;
+      final isLoggedIn = next.value != null;
 
       if (wasLoggedIn != isLoggedIn) {
         notifier.refresh();

@@ -1,4 +1,5 @@
 import 'package:farm_connect/src/core/common_widgets/custom_text_field.dart';
+import 'package:farm_connect/src/routing/app_routes.dart';
 import 'package:farm_connect/src/core/common_widgets/primary_button.dart';
 import 'package:farm_connect/src/core/theme/app_theme.dart';
 import 'package:farm_connect/src/features/auth/application/auth_controller.dart';
@@ -46,7 +47,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
       );
-      context.go('/login');
+      context.go(AppRoutes.login);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -135,7 +136,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       subtitle: 'Join KrishiSetu and unlock farmer-worker collaboration.',
       footerActions: [
         TextButton(
-          onPressed: () => context.go('/login'),
+          onPressed: () => context.go(AppRoutes.login),
           child: const Text('Back to login'),
         ),
       ],

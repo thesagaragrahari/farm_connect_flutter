@@ -6,4 +6,5 @@ Future<void> initHive() async {
   await Hive.initFlutter();
   Hive.registerAdapter(UserProfileAdapter());
   await Hive.openBox<UserProfile>('user_profile');
+  await Hive.openBox<String>('app_settings');
 }

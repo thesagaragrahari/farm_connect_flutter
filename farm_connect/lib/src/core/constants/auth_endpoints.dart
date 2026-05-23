@@ -1,6 +1,6 @@
 class AuthEndpoints {
   static const String baseUrl = 'https://farm-connect-backend-1.onrender.com';
-  
+
   // Auth
   static const String login = '/api/auth/login';
   static const String registerUser = '/api/auth/register/user';
@@ -13,7 +13,7 @@ class AuthEndpoints {
   static const String completeFarmer = '/api/users/complete-profile/farmer';
   static const String completeWorker = '/api/users/complete-profile/worker';
   static const String workerSkills = '/api/users/get/worker/skills';
-  
+
   // Jobs
   static const String postJob = '/api/jobs/farmer/postjob';
   static const String activeWorkers = '/api/users/filter/workers/available';

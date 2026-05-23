@@ -15,7 +15,7 @@ class LoginResponseDto {
   }
 
   Map<String, dynamic> toJson() => {
-    'token': token,
-    'profileCompleted': profileCompleted,
-  };
+        'token': token,
+        'profileCompleted': profileCompleted,
+      };
 }

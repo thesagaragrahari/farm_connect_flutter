@@ -1,829 +1,426 @@
-import 'dart:math' as math;
-
-import 'package:farm_connect/src/core/common_widgets/app_shell_controls.dart';
-import 'package:farm_connect/src/core/theme/app_theme.dart';
-import 'package:farm_connect/src/core/theme/app_theme_controller.dart';
+import 'package:farm_connect/src/core/layout/responsive_layout.dart';
+import 'package:farm_connect/src/routing/app_routes.dart';
+import 'package:farm_connect/src/core/common_widgets/app_top_bar.dart';
 import 'package:farm_connect/src/core/theme/app_palette.dart';
+import 'package:farm_connect/src/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class UserModulePreviewPage extends ConsumerStatefulWidget {
+class UserModulePreviewPage extends StatefulWidget {
   const UserModulePreviewPage({super.key});
 
   @override
-  ConsumerState<UserModulePreviewPage> createState() =>
-      _UserModulePreviewPageState();
+  State<UserModulePreviewPage> createState() => _UserModulePreviewPageState();
 }
 
-class _UserModulePreviewPageState extends ConsumerState<UserModulePreviewPage> {
+class _UserModulePreviewPageState extends State<UserModulePreviewPage> {
   int selectedTab = 0;
 
-  static const _tabs = <_PreviewTab>[
-    _PreviewTab(label: 'Auth', icon: Icons.lock_rounded),
-    _PreviewTab(label: 'Home', icon: Icons.chat_bubble_rounded),
-    _PreviewTab(label: 'Workers', icon: Icons.groups_2_rounded),
-    _PreviewTab(label: 'Jobs', icon: Icons.add_box_rounded),
-    _PreviewTab(label: 'Profile', icon: Icons.person_rounded),
-    _PreviewTab(label: 'Settings', icon: Icons.settings_rounded),
+  static const _tabs = <_HubTab>[
+    _HubTab(label: 'Auth', icon: Icons.lock_rounded),
+    _HubTab(label: 'Home', icon: Icons.home_rounded),
+    _HubTab(label: 'Workers', icon: Icons.groups_2_rounded),
+    _HubTab(label: 'Jobs', icon: Icons.work_rounded),
+    _HubTab(label: 'Profile', icon: Icons.person_rounded),
+    _HubTab(label: 'Settings', icon: Icons.settings_rounded),
   ];
 
-  static const _pages = <_PreviewRoute>[
-    _PreviewRoute(
+  static const _routes = <_HubRoute>[
+    _HubRoute(
       title: 'Splash Screen',
-      subtitle: 'Premium animated app launch experience',
-      path: '/splash',
+      subtitle: 'Animated launch experience',
+      path: AppRoutes.splash,
       icon: Icons.auto_awesome_rounded,
       tabIndex: 0,
-      badge: 'Launch',
     ),
-    _PreviewRoute(
+    _HubRoute(
       title: 'Login',
-      subtitle: 'Role based email and password login screen',
-      path: '/preview/auth/login',
+      subtitle: 'Secure email and password access',
+      path: AppRoutes.login,
       icon: Icons.login_rounded,
       tabIndex: 0,
-      badge: 'Auth',
     ),
-    _PreviewRoute(
+    _HubRoute(
       title: 'Signup',
-      subtitle: 'Create farmer or worker account',
-      path: '/preview/auth/signup',
+      subtitle: 'Create a farmer or worker account',
+      path: AppRoutes.signup,
       icon: Icons.person_add_rounded,
       tabIndex: 0,
-      badge: 'New',
     ),
-    _PreviewRoute(
-      title: 'Forgot Password',
-      subtitle: 'Request password reset email',
-      path: '/preview/auth/forgot-password',
+    _HubRoute(
+      title: 'Password Help',
+      subtitle: 'Reset and verify account access',
+      path: AppRoutes.forgotPassword,
       icon: Icons.lock_reset_rounded,
       tabIndex: 0,
-      badge: 'Help',
     ),
-    _PreviewRoute(
-      title: 'Reset Password',
-      subtitle: 'Token based password reset form',
-      path: '/preview/auth/reset-password',
-      icon: Icons.password_rounded,
-      tabIndex: 0,
-      badge: 'Token',
-    ),
-    _PreviewRoute(
-      title: 'Verify Email',
-      subtitle: 'Email verification token screen',
-      path: '/preview/auth/verify-email',
-      icon: Icons.mark_email_read_rounded,
-      tabIndex: 0,
-      badge: 'Email',
-    ),
-    _PreviewRoute(
+    _HubRoute(
       title: 'Farmer Dashboard',
-      subtitle: 'Main farmer workflow with action cards',
-      path: '/farmer-dashboard',
+      subtitle: 'Main workspace for daily farm operations',
+      path: AppRoutes.farmerDashboard,
       icon: Icons.dashboard_rounded,
       tabIndex: 1,
-      badge: 'Home',
     ),
-    _PreviewRoute(
+    _HubRoute(
       title: 'Active Workers',
-      subtitle: 'Filter and browse available workers',
-      path: '/active-users',
+      subtitle: 'Find available workers by skill and location',
+      path: AppRoutes.activeUsers,
       icon: Icons.people_alt_rounded,
       tabIndex: 2,
-      badge: 'Live',
     ),
-    _PreviewRoute(
+    _HubRoute(
       title: 'Post Job',
-      subtitle: 'Create a lightweight farm job post',
-      path: '/post-job',
-      icon: Icons.work_rounded,
+      subtitle: 'Create a farm job request',
+      path: AppRoutes.postJob,
+      icon: Icons.add_business_rounded,
       tabIndex: 3,
-      badge: 'New',
     ),
-    _PreviewRoute(
+    _HubRoute(
       title: 'Manage Jobs',
-      subtitle: 'Track active, past and upcoming jobs',
-      path: '/manage-jobs',
-      icon: Icons.list_alt_rounded,
+      subtitle: 'Track active, upcoming and past work',
+      path: AppRoutes.manageJobs,
+      icon: Icons.view_kanban_rounded,
       tabIndex: 3,
-      badge: 'Board',
     ),
-    _PreviewRoute(
-      title: 'Profile Screen',
-      subtitle: 'Completion, details and role profile access',
-      path: '/profile',
-      icon: Icons.person_rounded,
+    _HubRoute(
+      title: 'Profile',
+      subtitle: 'Manage personal and role information',
+      path: AppRoutes.profile,
+      icon: Icons.account_circle_rounded,
       tabIndex: 4,
-      badge: 'Me',
     ),
-    _PreviewRoute(
+    _HubRoute(
       title: 'Edit Profile',
-      subtitle: 'Personal details, address, bio and language',
-      path: '/profile/edit',
+      subtitle: 'Update contact, bio and address details',
+      path: AppRoutes.editProfile,
       icon: Icons.edit_rounded,
       tabIndex: 4,
-      badge: 'Edit',
     ),
-    _PreviewRoute(
+    _HubRoute(
       title: 'Worker Details',
-      subtitle: 'Skills, wage, radius and availability',
-      path: '/profile/worker',
+      subtitle: 'Skills, availability, wage and radius',
+      path: AppRoutes.workerProfile,
       icon: Icons.engineering_rounded,
       tabIndex: 4,
-      badge: 'Skill',
     ),
-    _PreviewRoute(
+    _HubRoute(
       title: 'Farmer Details',
       subtitle: 'Farm type, land size and hiring preferences',
-      path: '/profile/farmer',
+      path: AppRoutes.farmerProfile,
       icon: Icons.agriculture_rounded,
       tabIndex: 4,
-      badge: 'Farm',
     ),
-    _PreviewRoute(
-      title: 'Skill Selection',
-      subtitle: 'Chip based worker skill picker',
-      path: '/profile/worker/skills',
-      icon: Icons.handyman_rounded,
-      tabIndex: 4,
-      badge: 'Pick',
-    ),
-    _PreviewRoute(
-      title: 'Public Profile',
-      subtitle: 'Profile preview with skill showcase',
-      path: '/profile/public/preview-user',
-      icon: Icons.badge_rounded,
-      tabIndex: 4,
-      badge: 'Public',
-    ),
-    _PreviewRoute(
+    _HubRoute(
       title: 'Settings',
-      subtitle: 'Notification, privacy and logout controls',
-      path: '/settings',
-      icon: Icons.settings_rounded,
+      subtitle: 'Notifications, privacy and account controls',
+      path: AppRoutes.settings,
+      icon: Icons.tune_rounded,
       tabIndex: 5,
-      badge: 'Safe',
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    final themeMode = ref.watch(themeProvider);
-    final lightMode = themeMode == ThemeMode.light;
-    final desktopMode = ref.watch(desktopModeProvider);
     final palette = AppTheme.palette(context);
-    final pages = _pages
-        .where((page) => page.tabIndex == selectedTab)
+    final routes = _routes
+        .where((route) => route.tabIndex == selectedTab)
         .toList(growable: false);
 
     return Scaffold(
-      backgroundColor: palette.pageBackground,
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: palette.outerGradient,
+      appBar: appTopBar(
+        title: const Text('FarmConnect'),
+        actions: [
+          IconButton(
+            tooltip: 'Sign in',
+            onPressed: () => context.push(AppRoutes.login),
+            icon: const Icon(Icons.login_rounded),
           ),
-        ),
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final horizontalMargin = desktopMode ? 24.0 : 14.0;
-              final verticalMargin = desktopMode ? 18.0 : 12.0;
-              final availableWidth = constraints.maxWidth.isFinite
-                  ? constraints.maxWidth
-                  : MediaQuery.sizeOf(context).width;
-              final availableHeight = constraints.maxHeight.isFinite
-                  ? constraints.maxHeight
-                  : MediaQuery.sizeOf(context).height;
-              final shellWidth = math.max(
-                0.0,
-                math.min(
-                  desktopMode ? 1180.0 : 430.0,
-                  availableWidth - (horizontalMargin * 2),
+        ],
+      ),
+      body: AppScreen(
+        child: ResponsivePage(
+          maxWidth: ResponsiveLayout.dashboardMaxWidth(context),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _HeroSummary(palette: palette),
+              const SizedBox(height: AppSpacing.xl),
+              _AdaptiveTabBar(
+                tabs: _tabs,
+                selectedIndex: selectedTab,
+                onChanged: (index) => setState(() => selectedTab = index),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 220),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                child: _RouteGrid(
+                  key: ValueKey(selectedTab),
+                  routes: routes,
                 ),
-              );
-              final shellHeight = math.max(
-                0.0,
-                desktopMode
-                    ? availableHeight - (verticalMargin * 2)
-                    : math.min(
-                        860.0,
-                        availableHeight - (verticalMargin * 2),
-                      ),
-              );
-
-              return Center(
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 260),
-                  curve: Curves.easeOutCubic,
-                  width: shellWidth,
-                  height: shellHeight,
-                  margin: EdgeInsets.symmetric(
-                    horizontal: horizontalMargin,
-                    vertical: verticalMargin,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(desktopMode ? 16 : 34),
-                    border: Border.all(
-                      color: AppTheme.metallicGold.withValues(alpha: 0.48),
-                      width: desktopMode ? 1 : 2,
-                    ),
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: palette.shellGradient,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.55),
-                        blurRadius: 28,
-                        offset: const Offset(0, 16),
-                      ),
-                      BoxShadow(
-                        color: AppTheme.forestGreen.withValues(alpha: 0.20),
-                        blurRadius: 42,
-                        offset: const Offset(0, 0),
-                      ),
-                    ],
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: _PreviewShell(
-                    iconUrl: AppTheme.appIconUrlFor(context),
-                    tabs: _tabs,
-                    pages: pages,
-                    selectedTab: selectedTab,
-                    desktopMode: desktopMode,
-                    lightMode: lightMode,
-                    palette: palette,
-                    onTabChanged: (index) =>
-                        setState(() => selectedTab = index),
-                  ),
-                ),
-              );
-            },
+              ),
+            ],
           ),
         ),
       ),
+      bottomNavigationBar: ResponsiveLayout.isMobile(context)
+          ? NavigationBar(
+              selectedIndex: selectedTab,
+              onDestinationSelected: (index) =>
+                  setState(() => selectedTab = index),
+              destinations: _tabs
+                  .map(
+                    (tab) => NavigationDestination(
+                      icon: Icon(tab.icon),
+                      label: tab.label,
+                    ),
+                  )
+                  .toList(),
+            )
+          : null,
     );
   }
 }
 
-class _PreviewShell extends StatelessWidget {
-  final String iconUrl;
-  final List<_PreviewTab> tabs;
-  final List<_PreviewRoute> pages;
-  final int selectedTab;
-  final bool desktopMode;
-  final bool lightMode;
+class _HeroSummary extends StatelessWidget {
   final AppPalette palette;
-  final ValueChanged<int> onTabChanged;
 
-  const _PreviewShell({
-    required this.iconUrl,
-    required this.tabs,
-    required this.pages,
-    required this.selectedTab,
-    required this.desktopMode,
-    required this.lightMode,
-    required this.palette,
-    required this.onTabChanged,
-  });
+  const _HeroSummary({required this.palette});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    final textTheme = Theme.of(context).textTheme;
+    final copy = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _PreviewAppBar(
-          iconUrl: iconUrl,
-          lightMode: lightMode,
+        Text(
+          'Farm work, organized.',
+          style: textTheme.headlineMedium?.copyWith(
+            color: palette.primaryText,
+            fontWeight: FontWeight.w900,
+          ),
         ),
-        _PreviewToggleBar(
-          tabs: tabs,
-          selectedTab: selectedTab,
-          palette: palette,
-          onChanged: onTabChanged,
-        ),
-        Expanded(
-          child: desktopMode
-              ? _DesktopPageGrid(pages: pages, palette: palette)
-              : _MobilePageList(pages: pages, palette: palette),
-        ),
-        _PreviewBottomBar(
-          tabs: tabs,
-          selectedTab: selectedTab,
-          palette: palette,
-          onChanged: onTabChanged,
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          'A responsive workspace for farmers and workers to manage jobs, profiles and availability.',
+          style: textTheme.bodyLarge?.copyWith(
+            color: palette.secondaryText,
+          ),
         ),
       ],
     );
-  }
-}
 
-class _PreviewAppBar extends StatelessWidget {
-  final String iconUrl;
-  final bool lightMode;
-
-  const _PreviewAppBar({
-    required this.iconUrl,
-    required this.lightMode,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 14, 12, 12),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: lightMode
-              ? [
-                  const Color(0xFF8B6429),
-                  AppTheme.earthBrown,
-                  const Color(0xFFD8B46F),
-                ]
-              : [
-                  AppTheme.forestGreen,
-                  const Color(0xFF0B3B1A),
-                  AppTheme.earthBrown.withValues(alpha: 0.88),
-                ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.28),
-            blurRadius: 14,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 46,
-            height: 46,
-            padding: const EdgeInsets.all(3),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFFFFF6D0),
-                  Color(0xFFB8842D),
-                  Color(0xFFFFFFFF),
-                ],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.28),
-                  blurRadius: 10,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: ClipOval(
-              child: Image.network(
-                iconUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const ColoredBox(
-                  color: Colors.white,
-                  child: Icon(Icons.eco_rounded, color: AppTheme.forestGreen),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'FarmConnect',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                SizedBox(height: 2),
-                Text(
-                  'User module preview',
-                  style: TextStyle(
-                    color: Color(0xFFE7F4DF),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Icon(
-            Icons.search_rounded,
-            color: lightMode ? const Color(0xFF173F1D) : Colors.white,
-          ),
-          const SizedBox(width: 10),
-          Icon(
-            Icons.more_vert_rounded,
-            color: lightMode ? const Color(0xFF173F1D) : Colors.white,
-          ),
-          const SizedBox(width: 8),
-          const AppShellControls(),
-        ],
-      ),
+    return AppSurface(
+      featured: true,
+      padding: const EdgeInsets.all(AppSpacing.xxl),
+      child: copy,
     );
   }
 }
 
-class _PreviewToggleBar extends StatelessWidget {
-  final List<_PreviewTab> tabs;
-  final int selectedTab;
-  final AppPalette palette;
+class _AdaptiveTabBar extends StatelessWidget {
+  final List<_HubTab> tabs;
+  final int selectedIndex;
   final ValueChanged<int> onChanged;
 
-  const _PreviewToggleBar({
+  const _AdaptiveTabBar({
     required this.tabs,
-    required this.selectedTab,
-    required this.palette,
+    required this.selectedIndex,
     required this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 52,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        color: palette.tabBackground,
-        border: Border(bottom: BorderSide(color: palette.divider)),
-      ),
-      child: Row(
-        children: List.generate(tabs.length, (index) {
-          final selected = selectedTab == index;
-          return Expanded(
-            child: InkWell(
-              onTap: () => onChanged(index),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    tabs[index].label,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: selected
-                          ? palette.primaryText
-                          : palette.secondaryText,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                    ),
+    if (ResponsiveLayout.isMobile(context)) return const SizedBox.shrink();
+
+    return Wrap(
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.sm,
+      children: List.generate(tabs.length, (index) {
+        final selected = selectedIndex == index;
+        return ChoiceChip(
+          selected: selected,
+          avatar: Icon(tabs[index].icon, size: 18),
+          label: Text(tabs[index].label),
+          onSelected: (_) => onChanged(index),
+        );
+      }),
+    );
+  }
+}
+
+class _RouteCard extends StatelessWidget {
+  final _HubRoute route;
+  final bool featured;
+
+  const _RouteCard(this.route, {this.featured = false});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = AppTheme.palette(context);
+    final iconColor =
+        AppTheme.isDark(context) ? AppTheme.metallicGold : AppTheme.forestGreen;
+
+    return AppSurface(
+      featured: featured,
+      padding: EdgeInsets.all(featured ? AppSpacing.xxl : AppSpacing.lg),
+      onTap: () => context.push(route.path),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final vertical = featured || constraints.maxWidth >= 360;
+
+          if (vertical) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  radius: featured ? 28 : 24,
+                  backgroundColor: iconColor.withValues(alpha: 0.14),
+                  child: Icon(route.icon, color: iconColor),
+                ),
+                SizedBox(height: featured ? AppSpacing.xl : AppSpacing.lg),
+                Text(
+                  route.title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: palette.primaryText,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  route.subtitle,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: palette.secondaryText,
+                      ),
+                ),
+                SizedBox(height: featured ? AppSpacing.xl : AppSpacing.lg),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Icon(
+                    Icons.arrow_forward_rounded,
+                    color: palette.secondaryText,
                   ),
-                  const SizedBox(height: 11),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    width: selected ? 38 : 0,
-                    height: 3,
-                    decoration: BoxDecoration(
-                      color:
-                          selected ? AppTheme.metallicGold : Colors.transparent,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                  ),
-                ],
+                ),
+              ],
+            );
+          }
+
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                backgroundColor: iconColor.withValues(alpha: 0.14),
+                child: Icon(route.icon, color: iconColor),
               ),
-            ),
+              const SizedBox(width: AppSpacing.lg),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      route.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: palette.primaryText,
+                            fontWeight: FontWeight.w800,
+                          ),
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      route.subtitle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: palette.secondaryText,
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Icon(Icons.chevron_right_rounded, color: palette.secondaryText),
+            ],
           );
-        }),
+        },
       ),
     );
   }
 }
 
-class _MobilePageList extends StatelessWidget {
-  final List<_PreviewRoute> pages;
-  final AppPalette palette;
+class _RouteGrid extends StatelessWidget {
+  final List<_HubRoute> routes;
 
-  const _MobilePageList({
-    required this.pages,
-    required this.palette,
+  const _RouteGrid({
+    super.key,
+    required this.routes,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
-      itemCount: pages.length,
-      separatorBuilder: (_, __) => Divider(
-        height: 1,
-        indent: 76,
-        color: palette.divider,
-      ),
-      itemBuilder: (context, index) {
-        return _WhatsAppPageTile(page: pages[index], palette: palette);
+    if (routes.isEmpty) return const SizedBox.shrink();
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final desktop = constraints.maxWidth >= 980;
+
+        if (!desktop || routes.length < 3) {
+          return ResponsiveGrid(
+            minChildWidth: 260,
+            children: [
+              for (var i = 0; i < routes.length; i++)
+                _RouteCard(routes[i], featured: i == 0),
+            ],
+          );
+        }
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(flex: 5, child: _RouteCard(routes.first, featured: true)),
+            const SizedBox(width: AppSpacing.xxl),
+            Expanded(
+              flex: 7,
+              child: ResponsiveGrid(
+                columns: 2,
+                minChildWidth: 220,
+                children: routes.skip(1).map(_RouteCard.new).toList(),
+              ),
+            ),
+          ],
+        );
       },
     );
   }
 }
 
-class _DesktopPageGrid extends StatelessWidget {
-  final List<_PreviewRoute> pages;
-  final AppPalette palette;
-
-  const _DesktopPageGrid({
-    required this.pages,
-    required this.palette,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(20),
-      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 360,
-        mainAxisExtent: 116,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-      ),
-      itemCount: pages.length,
-      itemBuilder: (context, index) => _DesktopPageCard(
-        page: pages[index],
-        palette: palette,
-      ),
-    );
-  }
-}
-
-class _WhatsAppPageTile extends StatelessWidget {
-  final _PreviewRoute page;
-  final AppPalette palette;
-
-  const _WhatsAppPageTile({
-    required this.page,
-    required this.palette,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: () => context.push(page.path),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-          child: Row(
-            children: [
-              _MetallicAvatar(icon: page.icon, palette: palette),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            page.title,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              color: palette.primaryText,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          page.badge,
-                          style: const TextStyle(
-                            color: Color(0xFFD7BE79),
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      page.subtitle,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: palette.secondaryText,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DesktopPageCard extends StatelessWidget {
-  final _PreviewRoute page;
-  final AppPalette palette;
-
-  const _DesktopPageCard({
-    required this.page,
-    required this.palette,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: palette.card,
-      borderRadius: BorderRadius.circular(8),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(8),
-        onTap: () => context.push(page.path),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(
-              color: AppTheme.metallicGold.withValues(alpha: 0.42),
-            ),
-            gradient: LinearGradient(
-              colors: [
-                (palette.lightMode
-                        ? const Color(0xFFFFE7B8)
-                        : const Color(0xFFBEE8B1))
-                    .withValues(alpha: palette.lightMode ? 0.42 : 0.06),
-                AppTheme.forestGreen.withValues(alpha: 0.18),
-                Colors.black.withValues(alpha: palette.lightMode ? 0.02 : 0.20),
-              ],
-            ),
-          ),
-          child: Row(
-            children: [
-              _MetallicAvatar(icon: page.icon, palette: palette),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      page.title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: palette.primaryText,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      page.subtitle,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: palette.secondaryText,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.arrow_forward_ios_rounded, size: 16),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _MetallicAvatar extends StatelessWidget {
-  final IconData icon;
-  final AppPalette palette;
-
-  const _MetallicAvatar({
-    required this.icon,
-    required this.palette,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 52,
-      height: 52,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withValues(alpha: 0.95),
-            AppTheme.metallicGold,
-            AppTheme.earthBrown,
-            AppTheme.forestGreen,
-          ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.35),
-            blurRadius: 10,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Icon(icon, color: palette.iconActive, size: 25),
-    );
-  }
-}
-
-class _PreviewBottomBar extends StatelessWidget {
-  final List<_PreviewTab> tabs;
-  final int selectedTab;
-  final AppPalette palette;
-  final ValueChanged<int> onChanged;
-
-  const _PreviewBottomBar({
-    required this.tabs,
-    required this.selectedTab,
-    required this.palette,
-    required this.onChanged,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 70,
-      decoration: BoxDecoration(
-        color: palette.bottomBar,
-        border: Border(
-          top: BorderSide(
-            color: AppTheme.metallicGold.withValues(alpha: 0.26),
-          ),
-        ),
-      ),
-      child: Row(
-        children: List.generate(tabs.length, (index) {
-          final tab = tabs[index];
-          final selected = selectedTab == index;
-          return Expanded(
-            child: InkWell(
-              onTap: () => onChanged(index),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    tab.icon,
-                    size: 25,
-                    color: selected ? palette.iconActive : palette.iconInactive,
-                  ),
-                  const SizedBox(height: 4),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    width: selected ? 20 : 4,
-                    height: 3,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(999),
-                      color:
-                          selected ? AppTheme.metallicGold : Colors.transparent,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
-}
-
-class _PreviewTab {
+class _HubTab {
   final String label;
   final IconData icon;
 
-  const _PreviewTab({
+  const _HubTab({
     required this.label,
     required this.icon,
   });
 }
 
-class _PreviewRoute {
+class _HubRoute {
   final String title;
   final String subtitle;
   final String path;
   final IconData icon;
   final int tabIndex;
-  final String badge;
 
-  const _PreviewRoute({
+  const _HubRoute({
     required this.title,
     required this.subtitle,
     required this.path,
     required this.icon,
     required this.tabIndex,
-    required this.badge,
   });
 }

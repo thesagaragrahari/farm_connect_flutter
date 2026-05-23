@@ -1,3 +1,6 @@
+import 'package:farm_connect/src/core/layout/responsive_layout.dart';
+import 'package:farm_connect/src/routing/app_routes.dart';
+import 'package:farm_connect/src/core/common_widgets/app_top_bar.dart';
 import 'package:farm_connect/src/core/common_widgets/primary_button.dart';
 import 'package:farm_connect/src/features/user/application/user_controller.dart';
 import 'package:farm_connect/src/features/user/domain/entities/user_profile_details.dart';
@@ -16,11 +19,11 @@ class ProfileScreen extends ConsumerWidget {
     final state = ref.watch(userControllerProvider);
 
     return Scaffold(
-      appBar: AppBar(
+      appBar: appTopBar(
         title: const Text('Profile'),
         actions: [
           IconButton(
-            onPressed: () => context.push('/settings'),
+            onPressed: () => context.push(AppRoutes.settings),
             icon: const Icon(Icons.settings_outlined),
           ),
         ],
@@ -33,67 +36,137 @@ class ProfileScreen extends ConsumerWidget {
           if (profile == null) {
             return const Center(child: Text('Profile not available.'));
           }
-          return RefreshIndicator(
-            onRefresh: () =>
-                ref.read(userControllerProvider.notifier).refreshProfile(),
-            child: ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                _ProfileHeader(profile: profile),
-                const SizedBox(height: 18),
-                PrimaryButton(
-                  text: 'EDIT PROFILE',
-                  trailingIcon: Icons.edit_outlined,
-                  onPressed: () => context.push('/profile/edit'),
+          return AppScreen(
+            child: RefreshIndicator(
+              onRefresh: () =>
+                  ref.read(userControllerProvider.notifier).refreshProfile(),
+              child: ResponsivePage(
+                maxWidth: ResponsiveLayout.dashboardMaxWidth(context),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final wide = constraints.maxWidth >= 900;
+                        final header = _ProfileHeader(profile: profile);
+                        final action = PrimaryButton(
+                          text: 'EDIT PROFILE',
+                          trailingIcon: Icons.edit_outlined,
+                          onPressed: () => context.push(AppRoutes.editProfile),
+                        );
+
+                        if (!wide) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              header,
+                              const SizedBox(height: AppSpacing.lg),
+                              action,
+                            ],
+                          );
+                        }
+
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(flex: 7, child: header),
+                            const SizedBox(width: AppSpacing.xxl),
+                            Expanded(
+                              flex: 3,
+                              child: AppSurface(
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    Text(
+                                      'Profile Controls',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium,
+                                    ),
+                                    const SizedBox(height: AppSpacing.lg),
+                                    action,
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.xxl),
+                    ResponsiveGrid(
+                      minChildWidth: 320,
+                      children: [
+                        ProfileSectionCard(
+                          title: 'Personal Details',
+                          icon: Icons.person_outline_rounded,
+                          child: Column(
+                            children: [
+                              ProfileInfoRow(
+                                label: 'Name',
+                                value: profile.fullName,
+                              ),
+                              ProfileInfoRow(
+                                  label: 'Email', value: profile.email),
+                              ProfileInfoRow(
+                                label: 'Phone',
+                                value: profile.phone ?? '',
+                              ),
+                              ProfileInfoRow(
+                                label: 'Language',
+                                value: profile.language ?? '',
+                              ),
+                              ProfileInfoRow(
+                                  label: 'Bio', value: profile.bio ?? ''),
+                            ],
+                          ),
+                        ),
+                        ProfileSectionCard(
+                          title: 'Address',
+                          icon: Icons.location_on_outlined,
+                          child: Column(
+                            children: [
+                              ProfileInfoRow(
+                                label: 'Location',
+                                value: profile.location ?? '',
+                              ),
+                              ProfileInfoRow(
+                                label: 'Address',
+                                value: profile.address ?? '',
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (profile.isWorker)
+                          _RoleActionCard(
+                            title: 'Worker Details',
+                            subtitle:
+                                'Skills, availability, wage and work radius',
+                            icon: Icons.engineering_outlined,
+                            onTap: () => context.push(AppRoutes.workerProfile),
+                          )
+                        else
+                          _RoleActionCard(
+                            title: 'Farmer Details',
+                            subtitle:
+                                'Farm type, land size and hiring preferences',
+                            icon: Icons.agriculture_outlined,
+                            onTap: () => context.push(AppRoutes.farmerProfile),
+                          ),
+                        _RoleActionCard(
+                          title: 'Public Profile',
+                          subtitle:
+                              'Preview how your profile appears to others',
+                          icon: Icons.badge_outlined,
+                          onTap: () => context
+                              .push(AppRoutes.previewProfile(profile.id)),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 20),
-                ProfileSectionCard(
-                  title: 'Personal Details',
-                  icon: Icons.person_outline_rounded,
-                  child: Column(
-                    children: [
-                      ProfileInfoRow(label: 'Name', value: profile.fullName),
-                      ProfileInfoRow(label: 'Email', value: profile.email),
-                      ProfileInfoRow(label: 'Phone', value: profile.phone ?? ''),
-                      ProfileInfoRow(label: 'Language', value: profile.language ?? ''),
-                      ProfileInfoRow(label: 'Bio', value: profile.bio ?? ''),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 14),
-                ProfileSectionCard(
-                  title: 'Address',
-                  icon: Icons.location_on_outlined,
-                  child: Column(
-                    children: [
-                      ProfileInfoRow(label: 'Location', value: profile.location ?? ''),
-                      ProfileInfoRow(label: 'Address', value: profile.address ?? ''),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 14),
-                if (profile.isWorker)
-                  _RoleActionCard(
-                    title: 'Worker Details',
-                    subtitle: 'Skills, availability, wage and work radius',
-                    icon: Icons.engineering_outlined,
-                    onTap: () => context.push('/profile/worker'),
-                  )
-                else
-                  _RoleActionCard(
-                    title: 'Farmer Details',
-                    subtitle: 'Farm type, land size and hiring preferences',
-                    icon: Icons.agriculture_outlined,
-                    onTap: () => context.push('/profile/farmer'),
-                  ),
-                const SizedBox(height: 14),
-                _RoleActionCard(
-                  title: 'Public Profile',
-                  subtitle: 'Preview how your profile appears to others',
-                  icon: Icons.badge_outlined,
-                  onTap: () => context.push('/profile/public/${profile.id}'),
-                ),
-              ],
+              ),
             ),
           );
         },
@@ -109,39 +182,48 @@ class _ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 46,
-          backgroundImage: profile.profileImageUrl == null
-              ? null
-              : NetworkImage(profile.profileImageUrl!),
-          child: profile.profileImageUrl == null
-              ? const Icon(Icons.person_outline_rounded, size: 44)
-              : null,
-        ),
-        const SizedBox(height: 14),
-        Text(
-          profile.fullName.isEmpty ? 'Farm Connect User' : profile.fullName,
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          '${profile.role ?? 'User'} • ${profile.location ?? 'Location not added'}',
-          style: const TextStyle(color: Colors.grey),
-        ),
-        const SizedBox(height: 14),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(999),
-          child: LinearProgressIndicator(
-            minHeight: 8,
-            value: profile.profileCompletion / 100,
+    final palette = Theme.of(context).colorScheme;
+
+    return AppSurface(
+      featured: true,
+      padding: const EdgeInsets.all(AppSpacing.xxl),
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: 46,
+            backgroundImage: profile.profileImageUrl == null
+                ? null
+                : NetworkImage(profile.profileImageUrl!),
+            child: profile.profileImageUrl == null
+                ? const Icon(Icons.person_outline_rounded, size: 44)
+                : null,
           ),
-        ),
-        const SizedBox(height: 8),
-        Text('${profile.profileCompletion}% profile complete'),
-      ],
+          const SizedBox(height: AppSpacing.lg),
+          Text(
+            profile.fullName.isEmpty ? 'Farm Connect User' : profile.fullName,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            '${profile.role ?? 'User'} • ${profile.location ?? 'Location not added'}',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              minHeight: 8,
+              value: profile.profileCompletion / 100,
+              color: palette.tertiary,
+              backgroundColor: palette.surface.withValues(alpha: 0.6),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text('${profile.profileCompletion}% profile complete'),
+        ],
+      ),
     );
   }
 }
@@ -161,11 +243,9 @@ class _RoleActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Theme.of(context).colorScheme.surface,
-      borderRadius: BorderRadius.circular(8),
+    return AppSurface(
+      padding: EdgeInsets.zero,
       child: ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         leading: Icon(icon),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
         subtitle: Text(subtitle),

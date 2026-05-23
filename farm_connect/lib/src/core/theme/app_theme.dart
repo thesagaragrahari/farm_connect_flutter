@@ -17,11 +17,11 @@ class AppTheme {
   static const Color darkText = Color(0xFFEAF8E5);
   static const Color darkMutedText = Color(0xFFB7D6A9);
 
-  static const Color lightBackground = Color(0xFFF4E9D6);
-  static const Color lightSurface = Color(0xFFFFF1D9);
-  static const Color lightSurfaceAlt = Color(0xFFF0DCB8);
-  static const Color lightText = Color(0xFF2B1B0D);
-  static const Color lightMutedText = Color(0xFF6E5630);
+  static const Color lightBackground = Color(0xFFF8F1E3);
+  static const Color lightSurface = Color(0xFFFFFBF1);
+  static const Color lightSurfaceAlt = Color(0xFFEAF2DE);
+  static const Color lightText = Color(0xFF213A22);
+  static const Color lightMutedText = Color(0xFF647050);
 
   static const String lightAppIconUrl =
       'https://farm-connect-backend-1.onrender.com/images/emails-app.png';
@@ -40,6 +40,11 @@ class AppTheme {
 
   static String backgroundImageUrlFor(BuildContext context) {
     return isDark(context) ? darkBackgroundImageUrl : lightBackgroundImageUrl;
+  }
+
+  static ImageProvider backgroundImageFor(BuildContext context) {
+    if (isDark(context)) return const NetworkImage(darkBackgroundImageUrl);
+    return const NetworkImage(lightBackgroundImageUrl);
   }
 
   static ThemeData get lightTheme => _buildTheme(Brightness.light);
@@ -89,21 +94,66 @@ class AppTheme {
     );
   }
 
-  static BoxDecoration cardDecoration(BuildContext context) {
+  static BoxDecoration cardDecoration(
+    BuildContext context, {
+    bool featured = false,
+    bool elevated = false,
+  }) {
     final dark = isDark(context);
+    final palette = AppTheme.palette(context);
     return BoxDecoration(
       color: appSurface(context),
-      borderRadius: BorderRadius.circular(8),
+      gradient: LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: featured
+            ? palette.shellGradient
+            : [
+                palette.card,
+                dark ? const Color(0xFF102116) : const Color(0xFFF1F6E9),
+              ],
+      ),
+      borderRadius: BorderRadius.circular(featured ? 16 : 12),
       border: Border.all(
         color: dark
-            ? metallicGold.withValues(alpha: 0.24)
-            : earthBrown.withValues(alpha: 0.34),
+            ? metallicGold.withValues(alpha: featured ? 0.22 : 0.14)
+            : earthBrown.withValues(alpha: featured ? 0.30 : 0.22),
       ),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withValues(alpha: dark ? 0.22 : 0.10),
-          blurRadius: 16,
-          offset: const Offset(0, 8),
+          color: Colors.black.withValues(
+            alpha: dark ? (elevated ? 0.22 : 0.14) : (elevated ? 0.12 : 0.075),
+          ),
+          blurRadius: elevated ? 24 : 16,
+          offset: Offset(0, elevated ? 10 : 6),
+        ),
+        if (!dark)
+          BoxShadow(
+            color: Colors.white.withValues(alpha: 0.58),
+            blurRadius: 8,
+            offset: const Offset(0, -1),
+          ),
+        if (featured)
+          BoxShadow(
+            color: (dark ? metallicGold : forestGreen).withValues(
+              alpha: dark ? 0.08 : 0.075,
+            ),
+            blurRadius: 28,
+            offset: const Offset(0, 12),
+          ),
+      ],
+    );
+  }
+
+  static BoxDecoration subtleGlowDecoration(BuildContext context) {
+    final dark = isDark(context);
+    return BoxDecoration(
+      shape: BoxShape.circle,
+      color: (dark ? metallicGold : forestGreen).withValues(alpha: 0.12),
+      boxShadow: [
+        BoxShadow(
+          color: (dark ? metallicGold : forestGreen).withValues(alpha: 0.12),
+          blurRadius: 18,
         ),
       ],
     );
@@ -121,9 +171,11 @@ class AppTheme {
       seedColor: forestGreen,
       brightness: brightness,
       primary: forestGreen,
-      secondary: earthBrown,
+      secondary: isDark ? earthBrown : const Color(0xFF9D7A33),
       tertiary: metallicGold,
       surface: surface,
+      surfaceContainerHighest:
+          isDark ? darkSurfaceAlt : const Color(0xFFE7EEDB),
       onSurface: text,
       error: const Color(0xFFD84A3A),
     );
@@ -138,21 +190,24 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         centerTitle: false,
         elevation: 0,
-        backgroundColor: isDark ? forestGreen : earthBrown,
-        foregroundColor: isDark ? Colors.white : const Color(0xFF173F1D),
-        titleTextStyle: const TextStyle(
+        backgroundColor: isDark
+            ? darkBackground.withValues(alpha: 0.94)
+            : lightSurface.withValues(alpha: 0.94),
+        foregroundColor: isDark ? darkText : forestGreen,
+        titleTextStyle: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w800,
-          color: Colors.white,
+          color: isDark ? darkText : forestGreen,
         ),
         iconTheme: IconThemeData(
-          color: isDark ? Colors.white : const Color(0xFF173F1D),
+          color: isDark ? darkText : forestGreen,
         ),
       ),
       cardTheme: CardThemeData(
         color: surface,
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
       dividerTheme: DividerThemeData(
         color: isDark ? const Color(0xFF3B4A2F) : const Color(0xFFD2B47C),
@@ -161,20 +216,22 @@ class AppTheme {
         headlineMedium: TextStyle(
           fontWeight: FontWeight.bold,
           color: text,
-          fontSize: 24,
+          fontSize: 26,
         ),
-        titleLarge: TextStyle(color: text, fontWeight: FontWeight.w800),
-        titleMedium: TextStyle(color: text, fontWeight: FontWeight.w700),
-        bodyLarge: TextStyle(color: text),
-        bodyMedium: TextStyle(color: text),
-        bodySmall: TextStyle(color: muted),
+        titleLarge:
+            TextStyle(color: text, fontWeight: FontWeight.w800, fontSize: 20),
+        titleMedium:
+            TextStyle(color: text, fontWeight: FontWeight.w700, fontSize: 16),
+        bodyLarge: TextStyle(color: text, fontSize: 16, height: 1.45),
+        bodyMedium: TextStyle(color: text, fontSize: 14, height: 1.45),
+        bodySmall: TextStyle(color: muted, fontSize: 12, height: 1.4),
       ),
       iconTheme: IconThemeData(
         color: isDark ? darkText : forestGreen,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: isDark ? const Color(0xFF0C1B11) : const Color(0xFFFFF6E8),
+        fillColor: isDark ? const Color(0xFF0C1B11) : const Color(0xFFFFFAEF),
         labelStyle: TextStyle(color: muted, fontWeight: FontWeight.w600),
         hintStyle: TextStyle(color: muted.withValues(alpha: 0.78)),
         prefixIconColor: isDark ? darkMutedText : forestGreen,
@@ -196,7 +253,7 @@ class AppTheme {
           disabledForegroundColor: isDark ? darkMutedText : lightMutedText,
           minimumSize: const Size(double.infinity, 54),
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
           elevation: 0,
         ),
@@ -210,7 +267,7 @@ class AppTheme {
                 : earthBrown.withValues(alpha: 0.58),
           ),
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           minimumSize: const Size(double.infinity, 48),
         ),
       ),
@@ -246,6 +303,40 @@ class AppTheme {
               ? metallicGold.withValues(alpha: 0.32)
               : earthBrown.withValues(alpha: 0.35),
         ),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        height: 68,
+        backgroundColor: isDark
+            ? darkBackground.withValues(alpha: 0.96)
+            : lightSurface.withValues(alpha: 0.96),
+        indicatorColor: isDark
+            ? metallicGold.withValues(alpha: 0.22)
+            : forestGreen.withValues(alpha: 0.16),
+        labelTextStyle: WidgetStateProperty.resolveWith(
+          (states) => TextStyle(
+            color: states.contains(WidgetState.selected) ? text : muted,
+            fontSize: 12,
+            fontWeight: states.contains(WidgetState.selected)
+                ? FontWeight.w800
+                : FontWeight.w600,
+          ),
+        ),
+        iconTheme: WidgetStateProperty.resolveWith(
+          (states) => IconThemeData(
+            color: states.contains(WidgetState.selected)
+                ? (isDark ? metallicGold : forestGreen)
+                : muted,
+            size: 22,
+          ),
+        ),
+      ),
+      tabBarTheme: TabBarThemeData(
+        dividerColor: Colors.transparent,
+        indicatorColor: isDark ? metallicGold : forestGreen,
+        labelColor: text,
+        unselectedLabelColor: muted,
+        labelStyle: const TextStyle(fontWeight: FontWeight.w800),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: isDark ? darkSurface : lightText,

@@ -18,9 +18,10 @@ class AuthBackground extends StatelessWidget {
       decoration: BoxDecoration(
         color: palette.pageBackground,
         image: DecorationImage(
-          image: NetworkImage(AppTheme.backgroundImageUrlFor(context)),
+          image: AppTheme.backgroundImageFor(context),
           fit: BoxFit.cover,
           alignment: Alignment.center,
+          opacity: dark ? 0.92 : 0.19,
         ),
       ),
       child: DecoratedBox(
@@ -30,12 +31,25 @@ class AuthBackground extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: [
               palette.outerGradient.first.withValues(alpha: dark ? 0.90 : 0.70),
-              palette.outerGradient[1].withValues(alpha: dark ? 0.78 : 0.58),
-              palette.outerGradient.last.withValues(alpha: dark ? 0.88 : 0.66),
+              palette.outerGradient[1].withValues(alpha: dark ? 0.78 : 0.54),
+              palette.outerGradient.last.withValues(alpha: dark ? 0.88 : 0.62),
             ],
           ),
         ),
-        child: child,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: RadialGradient(
+              center: const Alignment(0.72, -0.78),
+              radius: 1.18,
+              colors: [
+                (dark ? AppTheme.metallicGold : Colors.white)
+                    .withValues(alpha: dark ? 0.10 : 0.28),
+                Colors.transparent,
+              ],
+            ),
+          ),
+          child: child,
+        ),
       ),
     );
   }

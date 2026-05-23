@@ -1,4 +1,5 @@
 import 'package:farm_connect/src/core/common_widgets/custom_text_field.dart';
+import 'package:farm_connect/src/routing/app_routes.dart';
 import 'package:farm_connect/src/core/common_widgets/primary_button.dart';
 import 'package:farm_connect/src/core/theme/app_theme.dart';
 import 'package:farm_connect/src/features/auth/application/auth_controller.dart';
@@ -158,7 +159,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     ref.listen<AsyncValue<AuthSession?>>(authControllerProvider, (_, next) {
       next.whenOrNull(
         data: (session) {
-          if (session != null && mounted) context.go('/dashboard');
+          if (session != null && mounted) context.go(AppRoutes.dashboard);
         },
         error: (error, _) {
           final errorMsg = error.toString();
@@ -180,15 +181,15 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       subtitle: 'Login to continue farming smarter with your community.',
       footerActions: [
         TextButton(
-          onPressed: () => context.go('/forgot-password'),
+          onPressed: () => context.go(AppRoutes.forgotPassword),
           child: const Text('Forgot password?'),
         ),
         TextButton(
-          onPressed: () => context.go('/signup'),
+          onPressed: () => context.go(AppRoutes.signup),
           child: const Text('Create new account'),
         ),
         TextButton(
-          onPressed: () => context.go('/verify-email'),
+          onPressed: () => context.go(AppRoutes.verifyEmail),
           child: const Text('Verify email with token'),
         ),
       ],

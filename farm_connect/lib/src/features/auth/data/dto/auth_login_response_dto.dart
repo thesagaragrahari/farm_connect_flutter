@@ -15,8 +15,7 @@ class AuthLoginResponseDto {
 
   factory AuthLoginResponseDto.fromJson(Map<String, dynamic> json) {
     final rawData = json['data'];
-    final dataMap =
-        rawData is Map ? Map<String, dynamic>.from(rawData) : null;
+    final dataMap = rawData is Map ? Map<String, dynamic>.from(rawData) : null;
 
     return AuthLoginResponseDto(
       success: json['success'] is bool ? json['success'] as bool : true,
@@ -40,9 +39,8 @@ class AuthLoginDataDto {
 
   factory AuthLoginDataDto.fromJson(Map<String, dynamic> json) {
     final rawProfile = json['userProfile'];
-    final userProfileMap = rawProfile is Map
-        ? Map<String, dynamic>.from(rawProfile)
-        : null;
+    final userProfileMap =
+        rawProfile is Map ? Map<String, dynamic>.from(rawProfile) : null;
 
     return AuthLoginDataDto(
       token: _stringOrNull(json['token']),

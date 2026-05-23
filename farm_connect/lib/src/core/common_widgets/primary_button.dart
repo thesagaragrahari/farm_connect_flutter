@@ -50,7 +50,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
                   isDark ? AppTheme.darkMutedText : AppTheme.lightMutedText,
               minimumSize: const Size(double.infinity, 54),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(999),
+                borderRadius: BorderRadius.circular(14),
               ),
               elevation: 0,
             ),
@@ -70,7 +70,7 @@ class _PrimaryButtonState extends State<PrimaryButton> {
                         widget.text,
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
-                          letterSpacing: 0.25,
+                          letterSpacing: 0,
                         ),
                       ),
                       if (widget.trailingIcon != null) ...[

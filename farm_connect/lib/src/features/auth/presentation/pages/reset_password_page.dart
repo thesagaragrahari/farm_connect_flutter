@@ -1,4 +1,5 @@
 import 'package:farm_connect/src/core/common_widgets/custom_text_field.dart';
+import 'package:farm_connect/src/routing/app_routes.dart';
 import 'package:farm_connect/src/core/common_widgets/primary_button.dart';
 import 'package:farm_connect/src/features/auth/application/auth_controller.dart';
 import 'package:farm_connect/src/features/auth/presentation/pages/widgets/auth_shell.dart';
@@ -40,7 +41,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(message)));
-      context.go('/login');
+      context.go(AppRoutes.login);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -58,7 +59,7 @@ class _ResetPasswordPageState extends ConsumerState<ResetPasswordPage> {
       subtitle: 'Paste your token and choose a fresh secure password.',
       footerActions: [
         TextButton(
-          onPressed: () => context.go('/login'),
+          onPressed: () => context.go(AppRoutes.login),
           child: const Text('Back to login'),
         ),
       ],
