@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:farm_connect/src/core/theme/app_theme.dart';
-
 class VerificationView extends StatelessWidget {
   final String email;
   final Future<void> Function() onResend;
@@ -14,24 +12,11 @@ class VerificationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = AppTheme.palette(context);
-    final textColor = AppTheme.appText(context);
-    final mutedColor = AppTheme.appMutedText(context);
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: palette.shellGradient,
-        ),
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        border: Border(
-          top: BorderSide(
-            color: AppTheme.metallicGold.withValues(alpha: 0.48),
-            width: 2,
-          ),
-        ),
+      decoration: const BoxDecoration(
+        color: Color(0xFF0D1A2D),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
       ),
       child: SafeArea(
         top: false,
@@ -42,7 +27,7 @@ class VerificationView extends StatelessWidget {
               height: 6,
               width: 60,
               decoration: BoxDecoration(
-                color: mutedColor.withValues(alpha: 0.28),
+                color: Colors.white.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
@@ -50,40 +35,22 @@ class VerificationView extends StatelessWidget {
             Container(
               width: 76,
               height: 76,
-              padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFFFFF6D0),
-                    Color(0xFFB8842D),
-                    Color(0xFFFFFFFF),
-                  ],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.28),
-                    blurRadius: 14,
-                    offset: const Offset(0, 7),
-                  ),
-                ],
+                border: Border.all(color: const Color(0xFF33D17A), width: 1.6),
               ),
               child: ClipOval(
-                child: Image.network(
-                  AppTheme.appIconUrlFor(context),
+                child: Image.asset(
+                  'assets/images/farm_connect_app_icon.png',
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => Image.asset(
-                    'assets/images/farm_connect_app_icon.png',
-                    fit: BoxFit.cover,
-                  ),
                 ),
               ),
             ),
             const SizedBox(height: 16),
-            Text(
+            const Text(
               'Verify Your Email',
               style: TextStyle(
-                color: textColor,
+                color: Color(0xFFEAF2FF),
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
               ),
@@ -92,8 +59,8 @@ class VerificationView extends StatelessWidget {
             Text(
               'We sent a verification link to\n$email',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: mutedColor,
+              style: const TextStyle(
+                color: Color(0xFF9FB3CC),
                 height: 1.5,
               ),
             ),
@@ -103,12 +70,8 @@ class VerificationView extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed: () async => onResend(),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.isDark(context)
-                      ? AppTheme.metallicGold
-                      : AppTheme.forestGreen,
-                  foregroundColor: AppTheme.isDark(context)
-                      ? const Color(0xFF102116)
-                      : Colors.white,
+                  backgroundColor: const Color(0xFF33D17A),
+                  foregroundColor: const Color(0xFF03240F),
                   minimumSize: const Size(double.infinity, 52),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(999),

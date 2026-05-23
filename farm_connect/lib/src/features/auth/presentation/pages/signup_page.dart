@@ -1,5 +1,6 @@
 import 'package:farm_connect/src/core/common_widgets/custom_text_field.dart';
 import 'package:farm_connect/src/core/common_widgets/primary_button.dart';
+import 'package:farm_connect/src/core/theme/app_theme.dart';
 import 'package:farm_connect/src/features/auth/application/auth_controller.dart';
 import 'package:farm_connect/src/features/auth/presentation/pages/widgets/auth_shell.dart';
 import 'package:flutter/material.dart';
@@ -58,13 +59,18 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
   Widget _buildRoleSelector() {
     const roles = <String>['worker', 'farmer'];
+    final muted = AppTheme.appMutedText(context);
+    final text = AppTheme.appText(context);
+    final surface = AppTheme.appSurfaceAlt(context);
+    final accent =
+        AppTheme.isDark(context) ? AppTheme.metallicGold : AppTheme.forestGreen;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Role',
           style: TextStyle(
-            color: kAuthTextSecondary,
+            color: muted,
             fontWeight: FontWeight.w600,
             fontSize: 13,
           ),
@@ -79,16 +85,14 @@ class _SignupPageState extends ConsumerState<SignupPage> {
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeOut,
               decoration: BoxDecoration(
-                color: selected
-                    ? kAuthAccent.withValues(alpha: 0.18)
-                    : const Color(0xFF091528),
-                borderRadius: BorderRadius.circular(14),
+                color: selected ? accent.withValues(alpha: 0.18) : surface,
+                borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: selected ? kAuthAccent : const Color(0xFF1E3452),
+                  color: selected ? accent : muted.withValues(alpha: 0.28),
                 ),
               ),
               child: InkWell(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(8),
                 onTap: () => setState(() => role = item),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -103,15 +107,13 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                             ? Icons.agriculture_rounded
                             : Icons.engineering_rounded,
                         size: 18,
-                        color: selected ? kAuthAccent : const Color(0xFF9DB2CA),
+                        color: selected ? accent : muted,
                       ),
                       const SizedBox(width: 6),
                       Text(
                         item[0].toUpperCase() + item.substring(1),
                         style: TextStyle(
-                          color: selected
-                              ? kAuthTextPrimary
-                              : const Color(0xFFB6C8DD),
+                          color: selected ? text : muted,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

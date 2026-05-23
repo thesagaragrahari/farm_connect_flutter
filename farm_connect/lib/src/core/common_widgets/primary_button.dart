@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../theme/app_theme.dart';
+
 class PrimaryButton extends StatefulWidget {
   final String text;
   final VoidCallback? onPressed;
@@ -24,6 +26,8 @@ class _PrimaryButtonState extends State<PrimaryButton> {
   @override
   Widget build(BuildContext context) {
     final disabled = widget.isLoading || widget.onPressed == null;
+    final isDark = AppTheme.isDark(context);
+    final loaderColor = isDark ? const Color(0xFF102116) : Colors.white;
 
     return AnimatedScale(
       duration: const Duration(milliseconds: 110),
@@ -37,10 +41,13 @@ class _PrimaryButtonState extends State<PrimaryButton> {
           child: ElevatedButton(
             onPressed: disabled ? null : widget.onPressed,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF33D17A),
-              foregroundColor: const Color(0xFF03240F),
-              disabledBackgroundColor: const Color(0xFF2A6650),
-              disabledForegroundColor: const Color(0xFFB4E8CD),
+              backgroundColor:
+                  isDark ? AppTheme.metallicGold : AppTheme.forestGreen,
+              foregroundColor: isDark ? const Color(0xFF102116) : Colors.white,
+              disabledBackgroundColor:
+                  isDark ? const Color(0xFF566044) : const Color(0xFFB7C6A9),
+              disabledForegroundColor:
+                  isDark ? AppTheme.darkMutedText : AppTheme.lightMutedText,
               minimumSize: const Size(double.infinity, 54),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(999),
@@ -48,11 +55,11 @@ class _PrimaryButtonState extends State<PrimaryButton> {
               elevation: 0,
             ),
             child: widget.isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     height: 20,
                     width: 20,
                     child: CircularProgressIndicator(
-                      color: Color(0xFF03240F),
+                      color: loaderColor,
                       strokeWidth: 2.2,
                     ),
                   )
