@@ -46,7 +46,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       final loggedIn = authState.hasValue && authState.value != null;
 
       if (path == AppRoutes.root || path == AppRoutes.splash) {
-        return loggedIn ? AppRoutes.dashboard : AppRoutes.preview;
+        return loggedIn ? AppRoutes.dashboard : AppRoutes.login;
       }
 
       if (AppRoutes.isAuth(path) && loggedIn) {
@@ -79,14 +79,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.root,
         pageBuilder: (context, state) => _buildAnimatedPage(
           state,
-          const SplashPage(nextLocation: AppRoutes.preview),
+          const SplashPage(nextLocation: AppRoutes.login),
         ),
       ),
       GoRoute(
         path: AppRoutes.splash,
         pageBuilder: (context, state) => _buildAnimatedPage(
           state,
-          const SplashPage(nextLocation: AppRoutes.preview),
+          const SplashPage(nextLocation: AppRoutes.login),
         ),
       ),
       GoRoute(
